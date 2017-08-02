@@ -20,7 +20,7 @@ function table.iterator(target, valuesOnly, index)
   -- If onCall is a table to iterate, then convert it to a stateless iterator function
   if not isIterator(target) then
     local t = target
-    local nxt = indexOnly and ipairs(t) or pairs(t)
+    local nxt = index and ipairs(t) or pairs(t)
     local k, v
     target = function()
       k, v = nxt(t, k)
