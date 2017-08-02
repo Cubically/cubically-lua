@@ -1,6 +1,7 @@
 --[[ This file focuses on iterators, like pairs and ipairs. It defines functions similar to LINQ that return iterators. ]]--
 
-local iterators = {}
+-- Keep track of all iterator objects, but allow them to be GC'd
+local iterators = setmetatable({}, {__mode = "k"})
 
 local function isIterator(o)
   return type(o) == "function" or iterators[o]
@@ -14,11 +15,12 @@ end
 -- An iterator object is just a wrapper for an iterator function with additional functionality attached to it.
 -- @param target The object to iterate. If `target` is an iterator object or function, this function simply wraps it. If `target` is a table, this function creates an iterator object from it.
 -- @param valuesOnly Whether to iterate through only the values of `target`. This parameter is only used if `target` is a table.
-function table.iterator(target, valuesOnly)
+-- @param index Whether to use `ipairs` instead of `pairs` to create the iterator
+function table.iterator(target, valuesOnly, index)
   -- If onCall is a table to iterate, then convert it to a stateless iterator function
   if not isIterator(target) then
     local t = target
-    local nxt = pairs(t)
+    local nxt = indexOnly and ipairs(t) or pairs(t)
     local k, v
     target = function()
       k, v = nxt(t, k)
@@ -90,12 +92,16 @@ function table.iterator(target, valuesOnly)
   
   iter.any = function(predicate)
     local ret = {target()}
+    local buffer = {}
     while #ret > 0 do
+      table.insert(buffer, ret)
       if predicate(unpack(ret)) then
+        target = table.iterator(buffer, true, true).select(function(t) return unpack(t) end).concat(target)
         return true
       end
       ret = {target()}
     end
+    target = table.iterator(buffer, true).concat(target)
     return false
   end
   
