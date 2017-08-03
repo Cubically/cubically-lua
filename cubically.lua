@@ -25,7 +25,7 @@ function C:exec(program)
   self.program = program
   self.ptr = 1
   self.dir = 1
-  self.loopStack = {}
+  self.loops = {}
   while self.ptr <= #self.program do
     local c = self.program:sub(self.ptr, self.ptr)
     local n = tonumber(c)
@@ -148,13 +148,13 @@ C.commands = {
     self.notepad = self:value(n)
   end,
   
-  ['>x'] = function(self, n)
+  ['>'] = function(self, n)
     if not n then
       return
     end
     self.notepad = (self.notepad > self:value(n)) and 1 or 0
   end,
-  ['<x'] = function(self, n)
+  ['<'] = function(self, n)
     if not n then
       return
     end
@@ -175,16 +175,16 @@ C.commands = {
       self.program = ""
     end
   end,
-  ['(x'] = function(self, n)
+  ['('] = function(self, n)
     local label
     if self.didCommand then
-      label = self.loopStack[#self.loopStack]
+      label = self.loops[#self.loops]
     else
       label = {
         ptr = self.ptr,
         args = {}
       }
-      table.insert(self.loopStack, label)
+      table.insert(self.loops, label)
     end
   
     if n then
@@ -193,9 +193,9 @@ C.commands = {
       label.args = nil
     end
   end,
-  [')x'] = function(self, n)
+  [')'] = function(self, n)
     if not n or self:value(n) ~= 0 then
-      local label = table.remove(self.loopStack)
+      local label = table.remove(self.loops)
       local valid = false
       while label ~= nil do
         if label.args then
@@ -212,11 +212,11 @@ C.commands = {
         if valid then
           break
         end
-        label = table.remove(self.loopStack)
+        label = table.remove(self.loops)
       end
       
       if label then
-        table.insert(self.loopStack, label)
+        table.insert(self.loops, label)
         self.ptr = label.ptr
         while tonumber(self.program:sub(self.ptr, self.ptr)) do
           self.ptr = self.ptr + 1
