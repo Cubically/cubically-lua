@@ -61,6 +61,12 @@ function C:exec(program)
   end
 end
 
+function C:nextcmd()
+  repeat
+    self.ptr = self.ptr + 1
+  until not tonumber(self.program:sub(self.ptr, self.ptr)) do
+end
+
 function C:value(n)
   if n % 1 ~= 0 then
     return 0
@@ -177,7 +183,24 @@ C.commands = {
   ['{x'] = function(self, n) end,
   ['}x'] = function(self, n) end,
   ['?xn'] = function(self, n)
-    
+    if self:value(n) == 0 then
+      -- Seek past conditional, and check elseifs and elses
+    else
+      self:nextcmd()
+      self.ptr = self.ptr - 1
+      
+      -- Ignore elseifs and elses
+    end
+  end,
+  ['!xn'] = function(self, n)
+    if self:value(n) == 0 then
+      -- Seek past conditional, and check elseifs and elses
+    else
+      self:nextcmd()
+      self.ptr = self.ptr - 1
+      
+      -- Ignore elseifs and elses
+    end
   end,
   
   ['@n'] = function(self, n)
