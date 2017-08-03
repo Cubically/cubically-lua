@@ -64,7 +64,7 @@ end
 function C:nextcmd()
   repeat
     self.ptr = self.ptr + 1
-  until not tonumber(self.program:sub(self.ptr, self.ptr)) do
+  until not tonumber(self.program:sub(self.ptr, self.ptr))
 end
 
 function C:value(n)
@@ -162,22 +162,16 @@ C.commands = {
   end,
   [')'] = function(self, n)
     if not n or self:value(n) ~= 0 then
-      local loopsIter = table.iterator(self.loops, true, true).reverse()
-      local label = loopsIter()
-      while label do
+      if #self.loops then
+        local label = table.remove(self.loops)
         local valid = not label.args or table.iterator(label.args).any(function(arg) return self:value(arg) ~= 0 end)
         
         if valid then
           -- Convert `loopsIter` back into `self.loops`, removing any elements that have been checked
-          self.loops = loopsIter.reverse().totable(nil, function(v) return v end)
           self.ptr = label.ptr - 1
           return
         end
-        
-        label = loopsIter()
       end
-      
-      -- The `loopsIter` doesn't modify `self.loops`, so nothing needs to be done if no jump was performed
     end
   end,
   ['{x'] = function(self, n) end,
