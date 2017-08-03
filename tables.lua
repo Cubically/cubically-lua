@@ -22,6 +22,9 @@ function table.iterator(target, valuesOnly, index)
     local t = target
     local nxt = index and ipairs(t) or pairs(t)
     local k, v
+    if index then
+      k = 0
+    end
     target = function()
       k, v = nxt(t, k)
       
@@ -90,6 +93,93 @@ function table.iterator(target, valuesOnly, index)
     end)
   end
   
+  iter.intersect = function(second)
+    -- TODO: It'd be neat if `r` could be hashed and stored as a key in `t` rather than a value
+    local secondTable = {}
+    local r = {second()}
+    while #r > 0 do
+      table.insert(secondTable, r)
+      r = {second()}
+    end
+    
+    return table.iterator(function()
+      local r = {target()}
+      
+      while #r > 0 do
+        local collision = false
+        for _, elem in ipairs(secondTable) do
+          collision = true
+          for i, v in ipairs(r) do
+            if elem[i] ~= v then
+              collision = false
+              break
+            end
+          end
+          
+          if collision then
+            break
+          end
+        end
+        
+        if collision then
+          return unpack(r)
+        end
+        
+        r = {target()}
+      end
+      return nil      
+    end)
+  end
+  
+  iter.except = function(second)
+    -- TODO: It'd be neat if `r` could be hashed and stored as a key in `t` rather than a value
+    local secondTable = {}
+    local r = {second()}
+    while #r > 0 do
+      table.insert(secondTable, r)
+      r = {second()}
+    end
+    
+    return table.iterator(function()
+      local r = {target()}
+      
+      while #r > 0 do
+        local collision = false
+        for _, elem in ipairs(secondTable) do
+          collision = true
+          for i, v in ipairs(r) do
+            if elem[i] ~= v then
+              collision = false
+              break
+            end
+          end
+          
+          if collision then
+            break
+          end
+        end
+        
+        if not collision then
+          return unpack(r)
+        end
+        
+        r = {target()}
+      end
+      return nil      
+    end)
+  end
+  
+  iter.reverse = function()
+    local buffer = iter.totable()
+    return table.iterator(function()
+      if #buffer == 0 then
+        return
+      end
+      
+      return unpack(table.remove(buffer))
+    end)
+  end
+  
   iter.any = function(predicate)
     local ret = {target()}
     local buffer = {}
@@ -103,6 +193,15 @@ function table.iterator(target, valuesOnly, index)
     end
     target = table.iterator(buffer, true).concat(target)
     return false
+  end
+  
+  iter.unpack = function()
+    return table.iterator(function()
+      local ret = {target()}
+      if #ret > 0 then
+        return unpack(ret[1])
+      end
+    end)
   end
   
   iter.totable = function(keySelector, valueSelector)

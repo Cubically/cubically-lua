@@ -24,7 +24,6 @@ function C:exec(program)
   
   self.program = program
   self.ptr = 1
-  self.dir = 1
   self.loops = {}
   while self.ptr <= #self.program do
     local c = self.program:sub(self.ptr, self.ptr)
@@ -41,19 +40,24 @@ function C:exec(program)
         self.didCommand = true
       end
     else
+      local ptr = self.ptr
       if self.command and not self.didCommand and self.options.experimental then
         self:command()
+        self.didCommand = true
       end
       
-      self.command = self.commands[c] or (self.options.experimental and self.experimental[c] or nil)
-      self.didCommand = false
+      if self.ptr == ptr then
+        self.command = self.commands[c] or (self.options.experimental and self.experimental[c] or nil)
+        self.didCommand = false
+      end
     end
     
-    self.ptr = self.ptr + self.dir
-  end
-
-  if self.command and not self.didCommand and self.options.experimental then
-    self:command()
+    self.ptr = self.ptr + 1
+    
+    if self.ptr > #self.program and self.command and not self.didCommand and self.options.experimental then
+      self:command()
+      self.didCommand = true
+    end
   end
 end
 
@@ -74,107 +78,59 @@ function C:value(n)
 end
 
 C.commands = {
-  ['R'] = function(self, n)
-    if not n then
-      return
-    end
+  ['Rn'] = function(self, n)
     self.cube:R(n)
   end,
-  ['L'] = function(self, n)
-    if not n then
-      return
-    end
+  ['Ln'] = function(self, n)
     self.cube:L(n)
   end,
-  ['U'] = function(self, n)
-    if not n then
-      return
-    end
+  ['Un'] = function(self, n)
     self.cube:U(n)
   end,
-  ['D'] = function(self, n)
-    if not n then
-      return
-    end
+  ['Dn'] = function(self, n)
     self.cube:D(n)
   end,
-  ['F'] = function(self, n)
-    if not n then
-      return
-    end
+  ['Fn'] = function(self, n)
     self.cube:F(n)
   end,
-  ['B'] = function(self, n)
-    if not n then
-      return
-    end
+  ['Bn'] = function(self, n)
     self.cube:B(n)
   end,
   
-  ['+'] = function(self, n)
-    if not n then
-      return
-    end
+  ['+n'] = function(self, n)
     self.notepad = self.notepad + self:value(n)
   end,
-  ['-'] = function(self, n)
-    if not n then
-      return
-    end
+  ['-n'] = function(self, n)
     self.notepad = self.notepad - self:value(n)
   end,
-  ['*'] = function(self, n)
-    if not n then
-      return
-    end
+  ['*n'] = function(self, n)
     self.notepad = self.notepad * self:value(n)
   end,
-  ['/'] = function(self, n)
-    if not n then
-      return
-    end
+  ['/n'] = function(self, n)
     self.notepad = math.floor(self.notepad / self:value(n))
   end,
-  ['^'] = function(self, n)
-    if not n then
-      return
-    end
+  ['^n'] = function(self, n)
     self.notepad = self.notepad ^ self:value(n)
   end,
-  [':'] = function(self, n)
-    if not n then
-      return
-    end
+  [':n'] = function(self, n)
     self.notepad = self:value(n)
   end,
   
-  ['>'] = function(self, n)
-    if not n then
-      return
-    end
+  ['>n'] = function(self, n)
     self.notepad = (self.notepad > self:value(n)) and 1 or 0
   end,
-  ['<'] = function(self, n)
-    if not n then
-      return
-    end
+  ['<n'] = function(self, n)
     self.notepad = (self.notepad < self:value(n)) and 1 or 0
   end,
-  ['='] = function(self, n)
-    if not n then
-      return
-    end
+  ['=n'] = function(self, n)
     self.notepad = (self.notepad == self:value(n)) and 1 or 0
   end,
   
   ['&'] = function(self, n)
-    if not n then
-      return
-    end
-    if self:value(n) ~= 0 then
+    if not n or self:value(n) ~= 0 then
       self.program = ""
     end
-  end,
+  end, 
   ['('] = function(self, n)
     local label
     if self.didCommand then
@@ -184,6 +140,11 @@ C.commands = {
         ptr = self.ptr,
         args = {}
       }
+      
+      while self.program:sub(label.ptr, label.ptr) ~= "(" do
+        label.ptr = label.ptr - 1
+      end
+      
       table.insert(self.loops, label)
     end
   
@@ -195,47 +156,34 @@ C.commands = {
   end,
   [')'] = function(self, n)
     if not n or self:value(n) ~= 0 then
-      local label = table.remove(self.loops)
-      local valid = false
-      while label ~= nil do
-        if label.args then
-          for k, _ in pairs(label.args) do
-            if self:value(k) ~= 0 then
-              valid = true
-              break
-            end
-          end
-        else
-          valid = true
-        end
+      local loopsIter = table.iterator(self.loops, true, true).reverse()
+      local label = loopsIter()
+      while label do
+        local valid = not label.args or table.iterator(label.args).any(function(arg) return self:value(arg) ~= 0 end)
         
         if valid then
-          break
+          -- Convert `loopsIter` back into `self.loops`, removing any elements that have been checked
+          self.loops = loopsIter.reverse().totable(nil, function(v) return v end)
+          self.ptr = label.ptr - 1
+          return
         end
-        label = table.remove(self.loops)
+        
+        label = loopsIter()
       end
       
-      if label then
-        table.insert(self.loops, label)
-        self.ptr = label.ptr
-        while tonumber(self.program:sub(self.ptr, self.ptr)) do
-          self.ptr = self.ptr + 1
-        end
-        self.ptr = self.ptr - self.dir
-      end
+      -- The `loopsIter` doesn't modify `self.loops`, so nothing needs to be done if no jump was performed
     end
+  end,
+  ['{x'] = function(self, n) end,
+  ['}x'] = function(self, n) end,
+  ['?xn'] = function(self, n)
+    
   end,
   
-  ['@'] = function(self, n)
-    if not n then
-      return
-    end
+  ['@n'] = function(self, n)
     io.write(string.char(self:value(n) % 256))
   end,
-  ['%'] = function(self, n)
-    if not n then
-      return
-    end
+  ['%n'] = function(self, n)
     io.write(self:value(n))
   end,
   ['$'] = function(self, n)
@@ -254,14 +202,36 @@ C.commands = {
   end
 }
 
--- Create the experimental commands list
-C.experimental = table.iterator(C.commands)
-  .where(function(cmd, func) return #cmd > 1 and cmd:sub(2, 2) == "x" end)
-  .select(function(cmd, func) return cmd:sub(1, 1), func end)
-  .totable(function(cmd, func) return cmd end, function(cmd, func) return func end)
+-- Parse commands
+C.commands = table.iterator(C.commands)
+  .select(function(cmd, func)
+    local args = cmd:sub(2)
+    cmd = cmd:sub(1, 1)
+        
+    if args:match("n") then
+      local f = func
+      func = function(self, n)
+        return n and f(self, n) or nil
+      end
+    end
+    
+    return cmd, args, func
+  end)
+  .totable()
 
-for cmd, func in pairs(C.experimental) do
-  C.commands[cmd .. "x"] = nil
-end
+-- Create the experimental commands list
+C.experimental = table.iterator(C.commands, true)
+  .unpack()
+  .where(function(cmd, args, func) return args:match("x") end)
+  .totable(function(cmd, args, func) return cmd end, function(cmd, args, func) return func end)
+
+-- Remove experimental commands from main commands list
+C.commands = table.iterator(C.commands, true)
+  .unpack()
+  .where(function(cmd, args, func) return not args:match("x") end)
+  .totable(function(cmd, args, func) return cmd end, function(cmd, args, func) return func end)
+
+-- Obsolete commands
+C.commands['E'] = C.commands['&']
 
 _G.Cubically = C
