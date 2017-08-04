@@ -29,7 +29,7 @@ function C:exec(program)
   self.command = nil
   while self.ptr <= #self.program do
     if self.conditionFailed then
-      self:nextcmd()
+      self:skipcmd()
       self.doElse = true
       self.conditionFailed = false
     end
@@ -73,7 +73,7 @@ function C:exec(program)
   end
 end
 
-function C:nextcmd()
+function C:skipcmd()
   local level = 0
   local c = self.program:sub(self.ptr, self.ptr)
   local extraSkip
@@ -129,6 +129,9 @@ C.commands = {
     self.cube:B(n)
   end,
   
+  [':n'] = function(self, n)
+    self.notepad = self:value(n)
+  end,
   ['+n'] = function(self, n)
     self.notepad = self.notepad + self:value(n)
   end,
@@ -144,8 +147,20 @@ C.commands = {
   ['^n'] = function(self, n)
     self.notepad = self.notepad ^ self:value(n)
   end,
-  [':n'] = function(self, n)
-    self.notepad = self:value(n)
+  ['mnx'] = function(self, n)
+    self.notepad = self.notepad % self:value(n)
+  end,
+  ['snx'] = function(self, n)
+    self.notepad = bit32.arshift(self.notepad, self:value(n))
+  end,
+  ['anx'] = function(self, n)
+    self.notepad = bit32.band(self.notepad, self:value(n))
+  end,
+  ['onx'] = function(self, n)
+    self.notepad = bit32.bor(self.notepad, self:value(n))
+  end,
+  ['xnx'] = function(self, n)
+    self.notepad = bit32.bxor(self.notepad, self:value(n))
   end,
   
   ['>n'] = function(self, n)
@@ -203,7 +218,7 @@ C.commands = {
   ['?xn'] = function(self, n)
     if self:value(n) ~= 0 then
       self.conditionFailed = false
-      self:nextcmd()
+      self:skipcmd()
     else
       self.conditionFailed = true
     end
@@ -213,14 +228,14 @@ C.commands = {
   ['!x'] = function(self, n)
     if not self.doElse then
       -- Skip this command and any conditional aspects to it
-      self:nextcmd()
+      self:skipcmd()
     end
     
     if not n then
       self.conditionFailed = false
     elseif self:value(n) ~= 0 then
       self.conditionFailed = false
-      self:nextcmd()
+      self:skipcmd()
     else
       self.conditionFailed = true
     end

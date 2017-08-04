@@ -29,6 +29,11 @@ interpreter:exec("#") -- You can put any program here. This is an experimental c
 **Options:**
 - `experimental` - Enables functionality that is not in the official spec.
   - `#` - Print debugging information.
+  - `m` - Modulus
+  - `s` - Bitwise right shift, or left if given a negative number
+  - `a` - Bitwise AND
+  - `o` - Bitwise OR
+  - `x` - Bitwise XOR
   - **Conditionals**
     - `{...}` - Code block
     - `?` - Executes next command/block only if any argument evaluates to true or if there are no arguments. Also creates a block containing this command and the next command/block.
