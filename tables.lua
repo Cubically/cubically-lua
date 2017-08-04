@@ -19,20 +19,30 @@ end
 function table.iterator(target, valuesOnly, index)
   -- If onCall is a table to iterate, then convert it to a stateless iterator function
   if not isIterator(target) then
-    local t = target
-    local nxt = index and ipairs(t) or pairs(t)
-    local k, v
-    if index then
-      k = 0
-    end
-    target = function()
-      k, v = nxt(t, k)
-      
-      if valuesOnly then
-        return v
+    local typ = type(target)
+    if typ == "table" then
+      local nxt, t, k, v
+      if (index) then
+        nxt, t, k, v = ipairs(target)
+      else
+        nxt, t, k, v = pairs(target)
       end
       
-      return k, v
+      target = function()
+        k, v = nxt(t, k, v)
+        
+        if valuesOnly then
+          return v
+        end
+        
+        return k, v
+      end
+    elseif typ == "string" then
+      local i = -1
+      local str = target
+      target = target:gmatch(".")
+    else
+      error("target must be iterable")
     end
   end
   
@@ -75,13 +85,13 @@ function table.iterator(target, valuesOnly, index)
     end)
   end
   
-  iter.join = function(inner, selector)
-    inner = asIterator(inner)
+  iter.zip = function(second, selector)
+    second = asIterator(second)
     selector = selector or function(...) return ... end
     
     return table.iterator(function()
       local ret1 = {target()}
-      local ret2 = {inner()}
+      local ret2 = {second()}
       
       if #ret1 > 0 and #ret2 > 0 then
         for i, v in ipairs(ret2) do
@@ -169,6 +179,56 @@ function table.iterator(target, valuesOnly, index)
     end)
   end
   
+  iter.distinct = function()
+    local checked = {}
+    
+    return table.iterator(function()
+      local r = {target()}
+      
+      while #r > 0 do
+        local collision = false
+        for _, elem in ipairs(checked) do
+          collision = true
+          for i, v in ipairs(r) do
+            if elem[i] ~= v then
+              collision = false
+              break
+            end
+          end
+          
+          if collision then
+            break
+          end
+        end
+        
+        if not collision then
+          table.insert(checked, r)
+          return unpack(r)
+        end
+        
+        r = {target()}
+      end
+      
+      return nil
+    end)
+  end
+  
+  iter.skip = function(n)
+    while n > 0 and target() do
+      n = n - 1
+    end
+    return self
+  end
+  
+  iter.take = function(n)
+    return table.iterator(function()
+      if n > 0 then
+        n = n - 1
+        return target()
+      end
+    end)
+  end
+  
   iter.reverse = function()
     local buffer = iter.totable()
     return table.iterator(function()
@@ -178,6 +238,18 @@ function table.iterator(target, valuesOnly, index)
       
       return unpack(table.remove(buffer))
     end)
+  end
+  
+  iter.sort = function(comparer)
+    local buffer = iter.totable()
+    table.sort(buffer, function(a, b)
+      local t = {unpack(a)}
+      for i, v in ipairs(b) do
+        table.insert(t, v)
+      end
+      return comparer(unpack(t))
+    end)
+    return table.iterator(buffer, true, true).unpack()
   end
   
   iter.any = function(predicate)
@@ -191,8 +263,38 @@ function table.iterator(target, valuesOnly, index)
       end
       ret = {target()}
     end
-    target = table.iterator(buffer, true).concat(target)
+    target = table.iterator(buffer, true, true)
     return false
+  end
+  
+  iter.all = function(predicate)
+    local ret = {target()}
+    local buffer = {}
+    while #ret > 0 do
+      table.insert(buffer, ret)
+      if not predicate(unpack(ret)) then
+        target = table.iterator(buffer, true, true).select(function(t) return unpack(t) end).concat(target)
+        return false
+      end
+      ret = {target()}
+    end
+    target = table.iterator(buffer, true, true)
+    return true
+  end
+  
+  iter.aggregate = function(seed, func, resultSelector)
+    if type(seed) == "function" then
+      resultSelector = func
+      func = seed
+      seed = nil
+    end
+    
+    local ret = {target()}
+    while #ret > 0 do
+      seed = func(seed, unpack(ret))
+      ret = {target()}
+    end
+    return resultSelector and resultSelector(seed) or seed
   end
   
   iter.unpack = function()
@@ -250,3 +352,8 @@ function table.range(start, finish, step)
     return i <= finish and i or nil
   end)
 end
+
+local arr = table.range(10).select(function() return math.random(10) end).reverse().totable(nil, function(n) return n end)
+print(table.iterator(arr, true, true).aggregate("", function(cur, n) return cur .. n .. " " end))
+
+print(table.iterator(arr, true, true).sort(function(a, b) return a < b end).aggregate("", function(cur, n) return cur .. n .. " " end))
