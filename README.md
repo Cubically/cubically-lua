@@ -43,4 +43,4 @@ interpreter:exec("#") -- You can put any program here. This is an experimental c
       - `?{...}!{...}` will execute the first code block, but not the second.
       - `!{...}` by itself will not execute the code block, regardless of the arguments supplied to `!` (if any).
       - `{...}` by itself will execute the code block.
-      - `?6!{...}` will evaluate the code block regardless of the notepad value. The `!` is skipped if notepad evaluates to falsy, then `{...}` is evaluated.
+      - `?6!{...}` is equivalent to `?6{}!{...}`. If notepad is truthy, then `!{...}` is evaluated and the block is skipped, but if notepad is falsy, then `{...}` is evaluated and the block is executed.
