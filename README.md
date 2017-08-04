@@ -32,7 +32,7 @@ interpreter:exec("#") -- You can put any program here. This is an experimental c
   - `#` - Print debugging information.
   - **Conditionals**
     - `{...}` - Code block, ignored if not used with a conditional
-    - `?` - Executes next command/block only if any argument evaluates to true or if there are no arguments. Also create a block containing this command and the next command/block.
+    - `?` - Executes next command/block only if any argument evaluates to true or if there are no arguments. Also creates a block containing this command and the next command/block.
     - `!` - Executes next command/block only if code was just skipped due to a condition failing. If arguments are supplied and none of them evaluate to truthy, the next command/block will be skipped.
     - **Examples**
       - Print notepad only if notepad is truthy: `?6%6`
