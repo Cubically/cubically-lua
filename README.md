@@ -28,7 +28,6 @@ interpreter:exec("#") -- You can put any program here. This is an experimental c
 
 **Options:**
 - `experimental` - Enables functionality that is not in the official spec.
-  - Commands will be implicitly called if no arguments are supplied and they don't require arguments.
   - `#` - Print debugging information.
   - **Conditionals**
     - `{...}` - Code block
