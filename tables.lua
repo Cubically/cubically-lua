@@ -282,6 +282,39 @@ function table.iterator(target, valuesOnly, index)
     return true
   end
   
+  iter.first = function(predicate)
+    local ret = {target()}
+    local buffer = {}
+    while #ret > 0 do
+      table.insert(buffer, ret)
+      if not predicate or predicate(unpack(ret)) then
+        target = table.iterator(buffer, true, true).select(function(t) return unpack(t) end).concat(target)
+        return unpack(ret)
+      end
+      ret = {target()}
+    end
+    target = table.iterator(buffer, true, true)
+    return false
+  end
+  
+  iter.last = function(predicate)
+    local ret = {target()}
+    local last = nil
+    local buffer = {}
+    while #ret > 0 do
+      table.insert(buffer, ret)
+      if not predicate or predicate(unpack(ret)) then
+        target = table.iterator(buffer, true, true).select(function(t) return unpack(t) end).concat(target)
+        last = ret
+      end
+      ret = {target()}
+    end
+    target = table.iterator(buffer, true, true)
+    if last then
+      return unpack(last)
+    end
+  end
+  
   iter.aggregate = function(seed, func, resultSelector)
     if type(seed) == "function" then
       resultSelector = func

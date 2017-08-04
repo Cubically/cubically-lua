@@ -12,8 +12,6 @@ function C.new(options)
     cube = Cube.new(),
     notepad = 0,
     input = 0,
-    command = nil,
-    didCommand = false,
     options = options
   }, {__index = C})
 end
@@ -25,9 +23,20 @@ function C:exec(program)
   self.program = program
   self.ptr = 1
   self.loops = {}
+  self.conditionFailed = false
+  self.doElse = false
+  self.didCommand = false
+  self.command = nil
   while self.ptr <= #self.program do
+    if self.conditionFailed then
+      self:nextcmd()
+      self.doElse = true
+      self.conditionFailed = false
+    end
+    
     local c = self.program:sub(self.ptr, self.ptr)
     local n = tonumber(c)
+    local ptr = self.ptr
     
     if n then
       if not self.command then
@@ -38,12 +47,13 @@ function C:exec(program)
       if self.command then
         self:command(n)
         self.didCommand = true
+        self.doElse = false
       end
     else
-      local ptr = self.ptr
-      if self.command and not self.didCommand and self.options.experimental then
+      if self.command and not self.didCommand then
         self:command()
         self.didCommand = true
+        self.doElse = false
       end
       
       if self.ptr == ptr then
@@ -52,9 +62,11 @@ function C:exec(program)
       end
     end
     
-    self.ptr = self.ptr + 1
+    if self.ptr == ptr then
+      self.ptr = self.ptr + 1
+    end
     
-    if self.ptr > #self.program and self.command and not self.didCommand and self.options.experimental then
+    if self.ptr > #self.program and self.command and not self.didCommand then
       self:command()
       self.didCommand = true
     end
@@ -62,9 +74,23 @@ function C:exec(program)
 end
 
 function C:nextcmd()
+  local level = 0
+  local c = self.program:sub(self.ptr, self.ptr)
+  local extraSkip
   repeat
-    self.ptr = self.ptr + 1
-  until not tonumber(self.program:sub(self.ptr, self.ptr))
+    extraSkip = c == "?"
+    
+    repeat
+      if c == "{" then
+        level = level + 1
+      elseif c == "}" then
+        level = level - 1
+      end
+      
+      self.ptr = self.ptr + 1
+      c = self.program:sub(self.ptr, self.ptr)
+    until self.ptr > #self.program or (level == 0 and not tonumber(c))
+  until not extraSkip
 end
 
 function C:value(n)
@@ -168,32 +194,35 @@ C.commands = {
         
         if valid then
           -- Convert `loopsIter` back into `self.loops`, removing any elements that have been checked
-          self.ptr = label.ptr - 1
+          self.ptr = label.ptr
           return
         end
       end
     end
   end,
-  ['{x'] = function(self, n) end,
-  ['}x'] = function(self, n) end,
   ['?xn'] = function(self, n)
-    if self:value(n) == 0 then
-      -- Seek past conditional, and check elseifs and elses
-    else
+    if self:value(n) ~= 0 then
+      self.conditionFailed = false
       self:nextcmd()
-      self.ptr = self.ptr - 1
-      
-      -- Ignore elseifs and elses
+    else
+      self.conditionFailed = true
     end
   end,
-  ['!xn'] = function(self, n)
-    if self:value(n) == 0 then
-      -- Seek past conditional, and check elseifs and elses
-    else
+  ['{x'] = function(self, n) end,
+  ['}x'] = function(self, n) end,
+  ['!x'] = function(self, n)
+    if not self.doElse then
+      -- Skip this command and any conditional aspects to it
       self:nextcmd()
-      self.ptr = self.ptr - 1
-      
-      -- Ignore elseifs and elses
+    end
+    
+    if not n then
+      self.conditionFailed = false
+    elseif self:value(n) ~= 0 then
+      self.conditionFailed = false
+      self:nextcmd()
+    else
+      self.conditionFailed = true
     end
   end,
   
