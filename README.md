@@ -42,4 +42,4 @@ interpreter:exec("#") -- You can put any program here. This is an experimental c
     - **Notes**
       - `?{...}!{...}` will execute the first code block, but not the second.
       - `!{...}` by itself will not execute the code block, regardless of the arguments supplied to `!` (if any).
-      - `{...}` will execute the code block.
+      - `{...}` by itself will execute the code block.
