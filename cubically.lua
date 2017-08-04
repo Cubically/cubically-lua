@@ -147,19 +147,19 @@ C.commands = {
   ['^n'] = function(self, n)
     self.notepad = self.notepad ^ self:value(n)
   end,
-  ['mnx'] = function(self, n)
+  ['mxn'] = function(self, n)
     self.notepad = self.notepad % self:value(n)
   end,
-  ['snx'] = function(self, n)
+  ['sxn'] = function(self, n)
     self.notepad = bit32.arshift(self.notepad, self:value(n))
   end,
-  ['anx'] = function(self, n)
+  ['axn'] = function(self, n)
     self.notepad = bit32.band(self.notepad, self:value(n))
   end,
-  ['onx'] = function(self, n)
+  ['oxn'] = function(self, n)
     self.notepad = bit32.bor(self.notepad, self:value(n))
   end,
-  ['xnx'] = function(self, n)
+  ['xxn'] = function(self, n)
     self.notepad = bit32.bxor(self.notepad, self:value(n))
   end,
   
