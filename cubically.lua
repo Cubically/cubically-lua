@@ -162,6 +162,9 @@ C.commands = {
   ['`xn'] = function(self, n)
     self.notepad = bit32.bxor(self.notepad, self:value(n))
   end,
+  ["nx"] = function(self, n)
+    self.notepad = n and -self:value(n) or -self.notepad
+  end,
   
   ['>n'] = function(self, n)
     self.notepad = (self.notepad > self:value(n)) and 1 or 0

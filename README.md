@@ -34,8 +34,9 @@ interpreter:exec("#") -- You can put any program here. This is an experimental c
   - `"` - Bitwise AND
   - `|` - Bitwise OR
   - `` ` `` - Bitwise XOR
+  - `n` - Set the notepad to `-arg`, or `-notepad` if no argument is specified
   - **Conditionals**
-    - `{...}` - Code block
+    - `{...}` - Explicit code block
     - `?` - Executes next command/block only if any argument evaluates to true or if there are no arguments. Also creates a block containing this command and the next command/block.
     - `!` - Executes next command/block only if code was just skipped due to a condition failing. If arguments are supplied and none of them evaluate to truthy, the next command/block will be skipped.
     - **Examples**
@@ -49,3 +50,21 @@ interpreter:exec("#") -- You can put any program here. This is an experimental c
       - `{...}` by itself will execute the code block.
       - `?6!{...}` is equivalent to `?6{}!{...}`. If notepad is truthy, then `!{...}` is evaluated and the block is skipped, but if notepad is falsy, then `{...}` is evaluated and the block is executed.
       - `!?6{...}` is equivalent to `!6{...}`.
+    - **Notes on code blocks**
+      - `{%6%7:7}` is a code block
+      - `?6&` is a code block
+      - `+510` is a code block
+      - The code blocks in `+41?6{-3%7}!{-4%6}(%6-1)6` are:
+        - `+41`
+        - `?6{-3%7}`
+          - `{-3%7}`
+            - `-3`
+            - `%7`
+        - `!`
+        - `{-4%6}`
+          - `-4`
+          - `%6`
+        - `(`
+        - `%6`
+        - `-1`
+        - `)6`
