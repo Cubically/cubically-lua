@@ -147,19 +147,19 @@ C.commands = {
   ['^n'] = function(self, n)
     self.notepad = self.notepad ^ self:value(n)
   end,
-  ['mxn'] = function(self, n)
+  ['_xn'] = function(self, n)
     self.notepad = self.notepad % self:value(n)
   end,
   ['sxn'] = function(self, n)
     self.notepad = bit32.arshift(self.notepad, self:value(n))
   end,
-  ['axn'] = function(self, n)
+  ['"xn'] = function(self, n)
     self.notepad = bit32.band(self.notepad, self:value(n))
   end,
-  ['oxn'] = function(self, n)
+  ['|xn'] = function(self, n)
     self.notepad = bit32.bor(self.notepad, self:value(n))
   end,
-  ['xxn'] = function(self, n)
+  ['`xn'] = function(self, n)
     self.notepad = bit32.bxor(self.notepad, self:value(n))
   end,
   
@@ -265,7 +265,7 @@ C.commands = {
 
 -- Parse commands
 C.commands = table.iterator(C.commands)
-  .select(function(cmd, func)
+  :select(function(cmd, func)
     local args = cmd:sub(2)
     cmd = cmd:sub(1, 1)
         
@@ -278,19 +278,19 @@ C.commands = table.iterator(C.commands)
     
     return cmd, args, func
   end)
-  .totable()
+  :totable()
 
 -- Create the experimental commands list
 C.experimental = table.iterator(C.commands, true)
-  .unpack()
-  .where(function(cmd, args, func) return args:match("x") end)
-  .totable(function(cmd, args, func) return cmd end, function(cmd, args, func) return func end)
+  :unpack()
+  :where(function(cmd, args, func) return args:match("x") end)
+  :totable(function(cmd, args, func) return cmd end, function(cmd, args, func) return func end)
 
 -- Remove experimental commands from main commands list
 C.commands = table.iterator(C.commands, true)
-  .unpack()
-  .where(function(cmd, args, func) return not args:match("x") end)
-  .totable(function(cmd, args, func) return cmd end, function(cmd, args, func) return func end)
+  :unpack()
+  :where(function(cmd, args, func) return not args:match("x") end)
+  :totable(function(cmd, args, func) return cmd end, function(cmd, args, func) return func end)
 
 -- Obsolete commands
 C.commands['E'] = C.commands['&']
