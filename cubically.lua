@@ -40,8 +40,8 @@ function C:exec(program)
     
     if n then
       if not self.command then
-        print(self.cube:tostring())
-        return
+        --print(self.cube:tostring())
+        --return
       end
       
       if self.command then
@@ -206,7 +206,7 @@ C.commands = {
   end,
   [')'] = function(self, n)
     if not n or self:value(n) ~= 0 then
-      if #self.loops then
+      if #self.loops > 0 then
         local label = table.remove(self.loops)
         local valid = not label.args or table.iterator(label.args).any(function(arg) return self:value(arg) ~= 0 end)
         
