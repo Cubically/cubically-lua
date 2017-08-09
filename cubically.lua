@@ -205,16 +205,15 @@ C.commands = {
     end
   end,
   [')'] = function(self, n)
-    if not n or self:value(n) ~= 0 then
-      if #self.loops > 0 then
-        local label = table.remove(self.loops)
-        local valid = not label.args or table.iterator(label.args).any(function(arg) return self:value(arg) ~= 0 end)
-        
-        if valid then
-          -- Convert `loopsIter` back into `self.loops`, removing any elements that have been checked
-          self.ptr = label.ptr
-          return
-        end
+    local label = table.remove(self.loops)
+    if label then
+      if (not n or self:value(n) ~= 0) and (not label.args or table.iterator(label.args).any(function(arg) return self:value(arg) ~= 0 end)) then
+        -- Jump to the `(`
+        self.ptr = label.ptr
+        return
+      else
+        -- TODO: this should jump if *any* of the arguments are true, not only if the first one is
+        self:skipcmd()
       end
     end
   end,
