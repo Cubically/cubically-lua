@@ -1,3 +1,7 @@
+# Testing files
+program.cb
+input.txt
+
 # Compiled Lua sources
 luac.out
 
