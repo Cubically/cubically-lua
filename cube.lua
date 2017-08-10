@@ -158,8 +158,8 @@ function Cube:F(n)
     for i = 0, size - 1 do
       local t = faces[0][self:index(i, size - 1)]
       faces[0][self:index(i, size - 1)] = faces[1][self:index(size - 1, size - i - 1)]
-      faces[1][self:index(size - 1, size - i - 1)] = faces[5][self:index(size - i - 1, 2)]
-      faces[5][self:index(size - i - 1, 2)] = faces[3][self:index(0, i)]
+      faces[1][self:index(size - 1, size - i - 1)] = faces[5][self:index(size - i - 1, size - 1)]
+      faces[5][self:index(size - i - 1, size - 1)] = faces[3][self:index(0, i)]
       faces[3][self:index(0, i)] = t
     end
 
