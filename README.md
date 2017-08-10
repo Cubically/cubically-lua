@@ -37,6 +37,7 @@ interpreter:exec("#") -- You can put any program here. This is an experimental c
   - `` ` `` - Bitwise XOR
   - `n` - Set the notepad to `-arg`, or `-notepad` if no argument is specified
   - **Conditionals**
+    - **This only applies if the experimental flag is set. For non-experimental conditionals, please refer to the official language specification.**
     - `{...}` - Explicit code block
     - `?` - Executes next command/block only if any argument evaluates to true or if there are no arguments. Also creates a block containing this command and the next command/block.
     - `!` - Executes next command/block only if code was just skipped due to a condition failing. If arguments are supplied and none of them evaluate to truthy, the next command/block will be skipped.
