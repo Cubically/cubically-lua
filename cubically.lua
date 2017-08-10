@@ -33,11 +33,6 @@ function C:exec(program)
     local ptr = self.ptr
     
     if n then
-      if not self.command then
-        --print(self.cube:tostring())
-        --return
-      end
-      
       if self.command then
         self:command(n)
         self.didCommand = true
@@ -45,8 +40,8 @@ function C:exec(program)
       end
     elseif self.conditionFailed then
       self:skipcmd()
-      self.doElse = true
       self.conditionFailed = false
+      self.doElse = true
     else
       if self.command and not self.didCommand then
         self:command()
@@ -215,28 +210,63 @@ C.commands = {
       end
     end
   end,
-  ['?xn'] = function(self, n)
+  ['?n'] = function(self, n)
     if self:value(n) == 0 then
       self.conditionFailed = true
-    elseif self.options.experimental then
+      if not self.options.experimental then
+        self:skipcmd()
+      end
+    else
       self.conditionFailed = false
-      self:skipcmd()
+      if self.options.experimental then
+        self:skipcmd()
+      end
     end
   end,
-  ['{x'] = function(self, n) end,
-  ['}x'] = function(self, n) end,
-  ['!x'] = function(self, n)
-    if not self.doElse then
-      self:skipcmd()
-    end
-    
-    if not n then
-      self.conditionFailed = false
-    elseif self:value(n) ~= 0 then
-      self.conditionFailed = false
-      self:skipcmd()
+  ['{'] = function(self, n) end,
+  ['}'] = function(self, n) end,
+  ['!'] = function(self, n)
+    if self.options.experimental then
+      if not self.doElse then
+        if n then
+          if self.program:sub(self.ptr - 1, self.ptr - 1) == "!" then
+            self:skipcmd()
+            self.conditionFailed = true
+            return
+          end
+        else
+          self:skipcmd()
+          self.conditionFailed = true
+          return
+        end
+      end
+      
+      if not n then
+        self.conditionFailed = false
+      elseif self:value(n) == 0 then
+        self.conditionFailed = true
+        if not self.options.experimental then
+          self:skipcmd()
+        end
+      elseif self.options.experimental then
+        self.conditionFailed = false
+        self.doElse = false
+        if self.options.experimental then
+          self:skipcmd()
+        end
+      end
     else
-      self.conditionFailed = true
+      if n then
+        if self:value(n) == 0 then
+          self.conditionFailed = false
+        else
+          self.conditionFailed = true
+          self:skipcmd()
+        end
+      elseif not self.doElse then
+        self:skipcmd()
+        self.conditionFailed = true
+      end
     end
   end,
   
