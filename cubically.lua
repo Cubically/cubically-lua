@@ -9,7 +9,7 @@ function C.new(options)
   
   return setmetatable({
     instance = true,
-    cube = Cube.new(),
+    cube = Cube.new(options.size),
     notepad = 0,
     input = 0,
     options = options
