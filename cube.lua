@@ -44,118 +44,161 @@ local function rotateFace(cube, face)
   end
 end
 
-function Cube:R(n)
+local function unrotateFace(cube, face)
+  local size = cube.size
+  for y = 0, math.floor(size / 2) - 1 do
+    for x = 0, math.ceil(size / 2) - 1 do
+      local t = face[cube:index(size - 1 - y, x)]
+      face[cube:index(size - 1 - y, x)] = face[cube:index(size - 1 - x, size - 1 - y)]
+      face[cube:index(size - 1 - x, size - 1 - y)] = face[cube:index(y, size - 1 - x)]
+      face[cube:index(y, size - 1 - x)] = face[cube:index(x, y)]
+      face[cube:index(x, y)] = t
+    end
+  end
+end
+
+function Cube:R(n, depth)
   n = n % 4
+  depth = (depth or 0) % self.size
 
   local faces = self.faces
   local size = self.size
   for _ = 1, n do
     for i = 0, size - 1 do
-      local t = faces.U[self:index(size - 1, i)]
-      faces.U[self:index(size - 1, i)] = faces.F[self:index(size - 1, i)]
-      faces.F[self:index(size - 1, i)] = faces.D[self:index(size - 1, i)]
-      faces.D[self:index(size - 1, i)] = faces.B[self:index(0, size - i - 1)]
-      faces.B[self:index(0, size - i - 1)] = t
+      local t = faces.U[self:index(size - depth - 1, i)]
+      faces.U[self:index(size - depth - 1, i)] = faces.F[self:index(size - depth - 1, i)]
+      faces.F[self:index(size - depth - 1, i)] = faces.D[self:index(size - depth - 1, i)]
+      faces.D[self:index(size - depth - 1, i)] = faces.B[self:index(depth, size - i - 1)]
+      faces.B[self:index(depth, size - i - 1)] = t
     end
 
     -- Rotate face
-    rotateFace(self, faces.R)
+    if depth == 0 then
+      rotateFace(self, faces.R)
+    elseif depth == size - 1 then
+      unrotateFace(self, faces.L)
+    end
   end
 end
 
-function Cube:L(n)
+function Cube:L(n, depth)
   n = n % 4
+  depth = (depth or 0) % self.size
 
   local faces = self.faces
   local size = self.size
   for _ = 1, n do
     for i = 0, size - 1 do
-      local t = faces.U[self:index(0, i)]
-      faces.U[self:index(0, i)] = faces.B[self:index(self.size - 1, self.size - i - 1)]
-      faces.B[self:index(self.size - 1, self.size - i - 1)] = faces.D[self:index(0, i)]
-      faces.D[self:index(0, i)] = faces.F[self:index(0, i)]
-      faces.F[self:index(0, i)] = t
+      local t = faces.U[self:index(depth, i)]
+      faces.U[self:index(depth, i)] = faces.B[self:index(self.size - depth - 1, self.size - i - 1)]
+      faces.B[self:index(self.size - depth - 1, self.size - i - 1)] = faces.D[self:index(depth, i)]
+      faces.D[self:index(depth, i)] = faces.F[self:index(depth, i)]
+      faces.F[self:index(depth, i)] = t
     end
 
     -- Rotate face
-    rotateFace(self, faces.L)
+    if depth == 0 then
+      rotateFace(self, faces.L)
+    elseif depth == size - 1 then
+      unrotateFace(self, faces.R)
+    end
   end
 end
 
-function Cube:U(n)
+function Cube:U(n, depth)
   n = n % 4
+  depth = (depth or 0) % self.size
 
   local faces = self.faces
   local size = self.size
   for _ = 1, n do
     for i = 0, size - 1 do
-      local t = faces.L[self:index(i, 0)]
-      faces.L[self:index(i, 0)] = faces.F[self:index(i, 0)]
-      faces.F[self:index(i, 0)] = faces.R[self:index(i, 0)]
-      faces.R[self:index(i, 0)] = faces.B[self:index(i, 0)]
-      faces.B[self:index(i, 0)] = t
+      local t = faces.L[self:index(i, depth)]
+      faces.L[self:index(i, depth)] = faces.F[self:index(i, depth)]
+      faces.F[self:index(i, depth)] = faces.R[self:index(i, depth)]
+      faces.R[self:index(i, depth)] = faces.B[self:index(i, depth)]
+      faces.B[self:index(i, depth)] = t
     end
 
     -- Rotate face
-    rotateFace(self, faces.U)
+    if depth == 0 then
+      rotateFace(self, faces.U)
+    elseif depth == size - 1 then
+      unrotateFace(self, faces.D)
+    end
   end
 end
 
-function Cube:D(n)
+function Cube:D(n, depth)
   n = n % 4
+  depth = (depth or 0) % self.size
 
   local faces = self.faces
   local size = self.size
   for _ = 1, n do
     for i = 0, size - 1 do
-      local t = faces.B[self:index(i, size - 1)]
-      faces.B[self:index(i, size - 1)] = faces.R[self:index(i, size - 1)]
-      faces.R[self:index(i, size - 1)] = faces.F[self:index(i, size - 1)]
-      faces.F[self:index(i, size - 1)] = faces.L[self:index(i, size - 1)]
-      faces.L[self:index(i, size - 1)] = t
+      local t = faces.B[self:index(i, size - depth - 1)]
+      faces.B[self:index(i, size - depth - 1)] = faces.R[self:index(i, size - depth - 1)]
+      faces.R[self:index(i, size - depth - 1)] = faces.F[self:index(i, size - depth - 1)]
+      faces.F[self:index(i, size - depth - 1)] = faces.L[self:index(i, size - depth - 1)]
+      faces.L[self:index(i, size - depth - 1)] = t
     end
 
     -- Rotate face
-    rotateFace(self, faces.D)
+    if depth == 0 then
+      rotateFace(self, faces.D)
+    elseif depth == size - 1 then
+      unrotateFace(self, faces.U)
+    end
   end
 end
 
-function Cube:F(n)
+function Cube:F(n, depth)
   n = n % 4
+  depth = (depth or 0) % self.size
 
   local faces = self.faces
   local size = self.size
   for _ = 1, n do
     -- Rotate sides
     for i = 0, size - 1 do
-      local t = faces.U[self:index(i, size - 1)]
-      faces.U[self:index(i, size - 1)] = faces.L[self:index(size - 1, size - i - 1)]
-      faces.L[self:index(size - 1, size - i - 1)] = faces.D[self:index(size - i - 1, 0)]
-      faces.D[self:index(size - i - 1, 0)] = faces.R[self:index(0, i)]
-      faces.R[self:index(0, i)] = t
+      local t = faces.U[self:index(i, size - depth - 1)]
+      faces.U[self:index(i, size - depth - 1)] = faces.L[self:index(size - depth - 1, size - i - 1)]
+      faces.L[self:index(size - depth - 1, size - i - 1)] = faces.D[self:index(size - i - 1, depth)]
+      faces.D[self:index(size - i - 1, depth)] = faces.R[self:index(depth, i)]
+      faces.R[self:index(depth, i)] = t
     end
 
     -- Rotate face
-    rotateFace(self, faces.F)
+    if depth == 0 then
+      rotateFace(self, faces.F)
+    elseif depth == size - 1 then
+      unrotateFace(self, faces.B)
+    end
   end
 end
 
-function Cube:B(n)
+function Cube:B(n, depth)
   n = n % 4
+  depth = (depth or 0) % self.size
 
   local faces = self.faces
   local size = self.size
   for _ = 1, n do
     for i = 0, size - 1 do
-      local t = faces.U[self:index(i, 0)]
-      faces.U[self:index(i, 0)] = faces.R[self:index(size - 1, i)]
-      faces.R[self:index(size - 1, i)] = faces.D[self:index(size - i - 1, size - 1)]
-      faces.D[self:index(size - i - 1, size - 1)] = faces.L[self:index(0, size - i - 1)]
-      faces.L[self:index(0, size - i - 1)] = t
+      local t = faces.U[self:index(i, depth)]
+      faces.U[self:index(i, depth)] = faces.R[self:index(size - depth - 1, i)]
+      faces.R[self:index(size - depth - 1, i)] = faces.D[self:index(size - i - 1, size - depth - 1)]
+      faces.D[self:index(size - i - 1, size - depth - 1)] = faces.L[self:index(depth, size - i - 1)]
+      faces.L[self:index(depth, size - i - 1)] = t
     end
 
     -- Rotate face
-    rotateFace(self, faces.B)
+    if depth == 0 then
+      rotateFace(self, faces.B)
+    elseif depth == size - 1 then
+      unrotateFace(self, faces.F)
+    end
   end
 end
 
