@@ -28,12 +28,6 @@ function C:exec(program)
   self.didCommand = false
   self.command = nil
   while self.ptr <= #self.program do
-    if self.conditionFailed then
-      self:skipcmd()
-      self.doElse = true
-      self.conditionFailed = false
-    end
-    
     local c = self.program:sub(self.ptr, self.ptr)
     local n = tonumber(c)
     local ptr = self.ptr
@@ -49,6 +43,10 @@ function C:exec(program)
         self.didCommand = true
         self.doElse = false
       end
+    elseif self.conditionFailed then
+      self:skipcmd()
+      self.doElse = true
+      self.conditionFailed = false
     else
       if self.command and not self.didCommand then
         self:command()
@@ -218,18 +216,17 @@ C.commands = {
     end
   end,
   ['?xn'] = function(self, n)
-    if self:value(n) ~= 0 then
+    if self:value(n) == 0 then
+      self.conditionFailed = true
+    elseif self.options.experimental then
       self.conditionFailed = false
       self:skipcmd()
-    else
-      self.conditionFailed = true
     end
   end,
   ['{x'] = function(self, n) end,
   ['}x'] = function(self, n) end,
   ['!x'] = function(self, n)
     if not self.doElse then
-      -- Skip this command and any conditional aspects to it
       self:skipcmd()
     end
     
