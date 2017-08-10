@@ -31,32 +31,35 @@ function Cube:index(x, y)
   return y * self.size + x
 end
 
+local function rotateFace(cube, face)
+  local size = cube.size
+  for y = 0, math.floor(size / 2) - 1 do
+    for x = 0, math.ceil(size / 2) - 1 do
+      local t = face[cube:index(x, y)]
+      face[cube:index(x, y)] = face[cube:index(y, size - 1 - x)]
+      face[cube:index(y, size - 1 - x)] = face[cube:index(size - 1 - x, size - 1 - y)]
+      face[cube:index(size - 1 - x, size - 1 - y)] = face[cube:index(size - 1 - y, x)]
+      face[cube:index(size - 1 - y, x)] = t
+    end
+  end
+end
+
 function Cube:R(n)
   n = n % 4
 
   local faces = self.faces
   local size = self.size
-  local sizeSquared = self.sizeSquared
   for _ = 1, n do
     for i = 0, size - 1 do
-      local t = faces[0][self:index(size - 1, i)]
-      faces[0][self:index(size - 1, i)] = faces[2][self:index(size - 1, i)]
-      faces[2][self:index(size - 1, i)] = faces[5][self:index(size - 1, size - i - 1)]
-      faces[5][self:index(size - 1, size - i - 1)] = faces[4][self:index(0, size - i - 1)]
-      faces[4][self:index(0, size - i - 1)] = t
+      local t = faces.U[self:index(size - 1, i)]
+      faces.U[self:index(size - 1, i)] = faces.F[self:index(size - 1, i)]
+      faces.F[self:index(size - 1, i)] = faces.D[self:index(size - 1, i)]
+      faces.D[self:index(size - 1, i)] = faces.B[self:index(0, size - i - 1)]
+      faces.B[self:index(0, size - i - 1)] = t
     end
 
     -- Rotate face
-    local face = faces.R
-    for y = 0, math.floor(size / 2) - 1 do
-      for x = 0, math.ceil(size / 2) - 1 do
-        local t = face[self:index(x, y)]
-        face[self:index(x, y)] = face[self:index(y, size - 1 - x)]
-        face[self:index(y, size - 1 - x)] = face[self:index(size - 1 - x, size - 1 - y)]
-        face[self:index(size - 1 - x, size - 1 - y)] = face[self:index(size - 1 - y, x)]
-        face[self:index(size - 1 - y, x)] = t
-      end
-    end
+    rotateFace(self, faces.R)
   end
 end
 
@@ -65,27 +68,17 @@ function Cube:L(n)
 
   local faces = self.faces
   local size = self.size
-  local sizeSquared = self.sizeSquared
   for _ = 1, n do
     for i = 0, size - 1 do
-      local t = faces[0][self:index(0, i)]
-      faces[0][self:index(0, i)] = faces[4][self:index(self.size - 1, self.size - i - 1)]
-      faces[4][self:index(self.size - 1, self.size - i - 1)] = faces[5][self:index(0, self.size - i - 1)]
-      faces[5][self:index(0, self.size - i - 1)] = faces[2][self:index(0, i)]
-      faces[2][self:index(0, i)] = t
+      local t = faces.U[self:index(0, i)]
+      faces.U[self:index(0, i)] = faces.B[self:index(self.size - 1, self.size - i - 1)]
+      faces.B[self:index(self.size - 1, self.size - i - 1)] = faces.D[self:index(0, i)]
+      faces.D[self:index(0, i)] = faces.F[self:index(0, i)]
+      faces.F[self:index(0, i)] = t
     end
 
     -- Rotate face
-    local face = faces.L
-    for y = 0, math.floor(size / 2) - 1 do
-      for x = 0, math.ceil(size / 2) - 1 do
-        local t = face[self:index(x, y)]
-        face[self:index(x, y)] = face[self:index(y, size - 1 - x)]
-        face[self:index(y, size - 1 - x)] = face[self:index(size - 1 - x, size - 1 - y)]
-        face[self:index(size - 1 - x, size - 1 - y)] = face[self:index(size - 1 - y, x)]
-        face[self:index(size - 1 - y, x)] = t
-      end
-    end
+    rotateFace(self, faces.L)
   end
 end
 
@@ -94,27 +87,17 @@ function Cube:U(n)
 
   local faces = self.faces
   local size = self.size
-  local sizeSquared = self.sizeSquared
   for _ = 1, n do
     for i = 0, size - 1 do
-      local t = faces[1][self:index(i, 0)]
-      faces[1][self:index(i, 0)] = faces[2][self:index(i, 0)]
-      faces[2][self:index(i, 0)] = faces[3][self:index(i, 0)]
-      faces[3][self:index(i, 0)] = faces[4][self:index(i, 0)]
-      faces[4][self:index(i, 0)] = t
+      local t = faces.L[self:index(i, 0)]
+      faces.L[self:index(i, 0)] = faces.F[self:index(i, 0)]
+      faces.F[self:index(i, 0)] = faces.R[self:index(i, 0)]
+      faces.R[self:index(i, 0)] = faces.B[self:index(i, 0)]
+      faces.B[self:index(i, 0)] = t
     end
 
     -- Rotate face
-    local face = faces.U
-    for y = 0, math.floor(size / 2) - 1 do
-      for x = 0, math.ceil(size / 2) - 1 do
-        local t = face[self:index(x, y)]
-        face[self:index(x, y)] = face[self:index(y, size - 1 - x)]
-        face[self:index(y, size - 1 - x)] = face[self:index(size - 1 - x, size - 1 - y)]
-        face[self:index(size - 1 - x, size - 1 - y)] = face[self:index(size - 1 - y, x)]
-        face[self:index(size - 1 - y, x)] = t
-      end
-    end
+    rotateFace(self, faces.U)
   end
 end
 
@@ -123,27 +106,17 @@ function Cube:D(n)
 
   local faces = self.faces
   local size = self.size
-  local sizeSquared = self.sizeSquared
   for _ = 1, n do
     for i = 0, size - 1 do
-      local t = faces[4][self:index(i, size - 1)]
-      faces[4][self:index(i, size - 1)] = faces[3][self:index(i, size - 1)]
-      faces[3][self:index(i, size - 1)] = faces[2][self:index(i, size - 1)]
-      faces[2][self:index(i, size - 1)] = faces[1][self:index(i, size - 1)]
-      faces[1][self:index(i, size - 1)] = t
+      local t = faces.B[self:index(i, size - 1)]
+      faces.B[self:index(i, size - 1)] = faces.R[self:index(i, size - 1)]
+      faces.R[self:index(i, size - 1)] = faces.F[self:index(i, size - 1)]
+      faces.F[self:index(i, size - 1)] = faces.L[self:index(i, size - 1)]
+      faces.L[self:index(i, size - 1)] = t
     end
 
     -- Rotate face
-    local face = faces.D
-    for y = 0, math.floor(size / 2) - 1 do
-      for x = 0, math.ceil(size / 2) - 1 do
-        local t = face[self:index(size - 1 - y, x)]
-        face[self:index(size - 1 - y, x)] = face[self:index(size - 1 - x, size - 1 - y)]
-        face[self:index(size - 1 - x, size - 1 - y)] = face[self:index(y, size - 1 - x)]
-        face[self:index(y, size - 1 - x)] = face[self:index(x, y)]
-        face[self:index(x, y)] = t
-      end
-    end
+    rotateFace(self, faces.D)
   end
 end
 
@@ -152,28 +125,18 @@ function Cube:F(n)
 
   local faces = self.faces
   local size = self.size
-  local sizeSquared = self.sizeSquared
   for _ = 1, n do
     -- Rotate sides
     for i = 0, size - 1 do
-      local t = faces[0][self:index(i, size - 1)]
-      faces[0][self:index(i, size - 1)] = faces[1][self:index(size - 1, size - i - 1)]
-      faces[1][self:index(size - 1, size - i - 1)] = faces[5][self:index(size - i - 1, size - 1)]
-      faces[5][self:index(size - i - 1, size - 1)] = faces[3][self:index(0, i)]
-      faces[3][self:index(0, i)] = t
+      local t = faces.U[self:index(i, size - 1)]
+      faces.U[self:index(i, size - 1)] = faces.L[self:index(size - 1, size - i - 1)]
+      faces.L[self:index(size - 1, size - i - 1)] = faces.D[self:index(size - i - 1, 0)]
+      faces.D[self:index(size - i - 1, 0)] = faces.R[self:index(0, i)]
+      faces.R[self:index(0, i)] = t
     end
 
     -- Rotate face
-    local face = faces.F
-    for y = 0, math.floor(size / 2) - 1 do
-      for x = 0, math.ceil(size / 2) - 1 do
-        local t = face[self:index(x, y)]
-        face[self:index(x, y)] = face[self:index(y, size - 1 - x)]
-        face[self:index(y, size - 1 - x)] = face[self:index(size - 1 - x, size - 1 - y)]
-        face[self:index(size - 1 - x, size - 1 - y)] = face[self:index(size - 1 - y, x)]
-        face[self:index(size - 1 - y, x)] = t
-      end
-    end
+    rotateFace(self, faces.F)
   end
 end
 
@@ -182,27 +145,17 @@ function Cube:B(n)
 
   local faces = self.faces
   local size = self.size
-  local sizeSquared = self.sizeSquared
   for _ = 1, n do
     for i = 0, size - 1 do
-      local t = faces[0][self:index(i, 0)]
-      faces[0][self:index(i, 0)] = faces[3][self:index(size - 1, i)]
-      faces[3][self:index(size - 1, i)] = faces[5][self:index(size - i - 1, 0)]
-      faces[5][self:index(size - i - 1, 0)] = faces[1][self:index(0, size - i - 1)]
-      faces[1][self:index(0, size - i - 1)] = t
+      local t = faces.U[self:index(i, 0)]
+      faces.U[self:index(i, 0)] = faces.R[self:index(size - 1, i)]
+      faces.R[self:index(size - 1, i)] = faces.D[self:index(size - i - 1, size - 1)]
+      faces.D[self:index(size - i - 1, size - 1)] = faces.L[self:index(0, size - i - 1)]
+      faces.L[self:index(0, size - i - 1)] = t
     end
 
     -- Rotate face
-    local face = faces.B
-    for y = 0, math.floor(size / 2) - 1 do
-      for x = 0, math.ceil(size / 2) - 1 do
-        local t = face[self:index(x, y)]
-        face[self:index(x, y)] = face[self:index(y, size - 1 - x)]
-        face[self:index(y, size - 1 - x)] = face[self:index(size - 1 - x, size - 1 - y)]
-        face[self:index(size - 1 - x, size - 1 - y)] = face[self:index(size - 1 - y, x)]
-        face[self:index(size - 1 - y, x)] = t
-      end
-    end
+    rotateFace(self, faces.B)
   end
 end
 
@@ -224,7 +177,7 @@ function Cube:tostring()
   for y = 0, size - 1 do
     s = s .. (" "):rep(size)
     for x = 0, size - 1 do
-      s = s .. self.faces[0][self:index(x, y)]
+      s = s .. self.faces.U[self:index(x, y)]
     end
     s = s .. "\n"
   end
@@ -238,10 +191,10 @@ function Cube:tostring()
     s = s .. "\n"
   end
   
-  for y = size - 1, 0, -1 do
+  for y = 0, size - 1 do
     s = s .. (" "):rep(size)
     for x = 0, size - 1 do
-      s = s .. self.faces[5][self:index(x, y)]
+      s = s .. self.faces.D[self:index(x, y)]
     end
     s = s .. "\n"
   end
