@@ -11,7 +11,7 @@ require("cubically")
 local interpreter = Cubically.new([options]) -- Create a new instance of the interpreter
 interpreter:exec(program) -- Execute a program on the interpreter
 ```
-The interpreter's state is preserved between calls, so you could do this, for example:
+The interpreter's state is preserved between calls, so you can run programs in sections:
 ```lua
 -- Initialize the interpreter
 local interpreter = Cubically.new({experimental = true})
@@ -27,6 +27,7 @@ interpreter:exec("#") -- You can put any program here. This is an experimental c
 ```
 
 **Options:**
+- `size` - The size of the cube (default is `3` for 3x3)
 - `experimental` - Enables functionality that is not in the official spec.
   - `#` - Print debugging information.
   - `_` - Modulus
