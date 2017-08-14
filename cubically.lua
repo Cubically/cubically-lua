@@ -110,6 +110,8 @@ function C:value(n)
     return self.notepad
   elseif n == 7 then
     return self.input
+  elseif n == 8 then
+    return self.cube:solved() and 1 or 0
   else
     return 0
   end

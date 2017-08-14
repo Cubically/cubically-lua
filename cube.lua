@@ -31,6 +31,10 @@ function Cube:index(x, y)
   return y * self.size + x
 end
 
+function Cube:solved()
+  return self:value(0) == 0 and self:value(1) == 18 and self:value(2) == 27
+end
+
 local function rotateFace(cube, face)
   local size = cube.size
   for y = 0, math.floor(size / 2) - 1 do
@@ -59,7 +63,9 @@ end
 
 function Cube:R(n, depth)
   n = n % 4
-  depth = (depth or 0) % self.size
+  if depth < 0 or depth >= self.size then
+    return
+  end
 
   local faces = self.faces
   local size = self.size
@@ -83,7 +89,9 @@ end
 
 function Cube:L(n, depth)
   n = n % 4
-  depth = (depth or 0) % self.size
+  if depth < 0 or depth >= self.size then
+    return
+  end
 
   local faces = self.faces
   local size = self.size
@@ -107,7 +115,9 @@ end
 
 function Cube:U(n, depth)
   n = n % 4
-  depth = (depth or 0) % self.size
+  if depth < 0 or depth >= self.size then
+    return
+  end
 
   local faces = self.faces
   local size = self.size
@@ -131,7 +141,9 @@ end
 
 function Cube:D(n, depth)
   n = n % 4
-  depth = (depth or 0) % self.size
+  if depth < 0 or depth >= self.size then
+    return
+  end
 
   local faces = self.faces
   local size = self.size
@@ -155,7 +167,9 @@ end
 
 function Cube:F(n, depth)
   n = n % 4
-  depth = (depth or 0) % self.size
+  if depth < 0 or depth >= self.size then
+    return
+  end
 
   local faces = self.faces
   local size = self.size
@@ -180,7 +194,9 @@ end
 
 function Cube:B(n, depth)
   n = n % 4
-  depth = (depth or 0) % self.size
+  if depth < 0 or depth >= self.size then
+    return
+  end
 
   local faces = self.faces
   local size = self.size
