@@ -10,7 +10,6 @@ function C.new(options)
   options = (type(options) == "table") and options or {}
   
   return setmetatable({
-    instance = true,
     cube = Cube.new(options.size),
     notepad = 0,
     input = 0,
@@ -19,7 +18,7 @@ function C.new(options)
 end
 
 function C:exec(program)
-  assert(self.instance, "Must be an instance, call new() first")
+  assert(self.cube, "Must be an instance, call new() first")
   assert(type(program) == "string", "program must be a string")
   
   self.program = self.codepage.tochars(self.codepage.utf8bytes(program))
@@ -29,24 +28,33 @@ function C:exec(program)
   self.doElse = false
   self.didCommand = false
   self.command = nil
+  self.subscript = 0
   while self.ptr <= #self.program do
-    local char = self.program[self.ptr]
-    local byte = self.codepage.bytes[char]
-    local n = tonumber(char)
+    local c = self.program[self.ptr]
+    local b = self.codepage.bytes[c]
     local ptr = self.ptr
     
-    if n then
+    if self.codepage.digit(b) then
+      -- Command argument
+      
       if self.command then
-        self:command(n)
+        self:command(self.codepage.digit(b))
         self.didCommand = true
         self.doElse = false
       end
-    elseif 
+    elseif self.codepage.subscript(b) then
+      -- Layer selection
+      
+      self.subscript = self.subscript * 10 + self.codepage.subscript(b)
     elseif self.conditionFailed then
+      -- Command being skipped by a conditional
+      
       self:skipcmd()
       self.conditionFailed = false
       self.doElse = true
     else
+      -- Command
+      
       if self.command and not self.didCommand then
         self:command()
         self.didCommand = true
@@ -54,7 +62,8 @@ function C:exec(program)
       end
       
       if self.ptr == ptr then
-        self.command = self.commands[char] or (self.options.experimental and self.experimental[char] or nil)
+        self.command = self.commands[c] or (self.options.experimental and self.experimental[c] or nil)
+        self.subscript = 0
         self.didCommand = false
       end
     end
@@ -108,22 +117,22 @@ end
 
 C.commands = {
   ['Rn'] = function(self, n)
-    self.cube:R(n)
+    self.cube:R(n, self.subscript)
   end,
   ['Ln'] = function(self, n)
-    self.cube:L(n)
+    self.cube:L(n, self.subscript)
   end,
   ['Un'] = function(self, n)
-    self.cube:U(n)
+    self.cube:U(n, self.subscript)
   end,
   ['Dn'] = function(self, n)
-    self.cube:D(n)
+    self.cube:D(n, self.subscript)
   end,
   ['Fn'] = function(self, n)
-    self.cube:F(n)
+    self.cube:F(n, self.subscript)
   end,
   ['Bn'] = function(self, n)
-    self.cube:B(n)
+    self.cube:B(n, self.subscript)
   end,
   
   [':n'] = function(self, n)

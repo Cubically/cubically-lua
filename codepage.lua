@@ -6,9 +6,9 @@ local codepage = {}
 codepage.chars = {
   [0] = 
   -- _0   _1   _2   _3   _4   _5   _6   _7   _8   _9   _A   _B   _C   _D   _E   _F
-     "⁰", "¹", "²", "³", "⁴", "⁵", "⁶", "⁷", "⁸", "⁹", nil, nil, nil, nil, nil, nil, -- 0_ - 0A is `\n`
+     "₀", "₁", "₂", "₃", "₄", "₅", "₆", "₇", "₈", "₉", nil, nil, nil, nil, nil, nil, -- 0_ - 0A is `\n`
      nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, -- 1_
-     nil, "!", '"', "#", "$", "%", "&", "'", "(", ")", "*", "+", ",", "-", ".", "/", -- 2_
+     " ", "!", '"', "#", "$", "%", "&", "'", "(", ")", "*", "+", ",", "-", ".", "/", -- 2_
      "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ":", ";", "<", "=", ">", "?", -- 3_
      "@", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", -- 4_
      "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "[", nil, "]", "^", "_", -- 5_ - 5C is `\`
@@ -117,6 +117,26 @@ function codepage.tobytes(str)
     bytes[i] = codepage.bytes[v]
   end
   return bytes
+end
+
+function codepage.digit(char)
+  if type(char) == "string" then
+    char = codepage.bytes[char]
+  end
+  
+  if char >= 0x30 and char < 0x3A then
+    return char - 0x30
+  end
+end
+
+function codepage.subscript(char)
+  if type(char) == "string" then
+    char = codepage.bytes[char]
+  end
+  
+  if char >= 0x00 and char < 0x0A then
+    return char
+  end
 end
 
 return codepage
