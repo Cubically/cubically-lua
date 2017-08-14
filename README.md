@@ -1,5 +1,5 @@
-# cubically-lua
-A Cubically interpreter written in Lua.
+# cubically-lua [variant]
+A Cubically interpreter written in Lua. This is a variant of Cubically.
 
 ### Usage
 Import `cubically.lua`, `tables.lua`, and `cube.lua` into your project, then run this line of code:
@@ -26,16 +26,10 @@ print("===========")
 interpreter:exec("#") -- You can put any program here. This is an experimental command to show debugging info.
 ```
 
-**Options:**
+### Options
 - `size` - The size of the cube (default is `3` for 3x3)
 - `experimental` - Enables functionality that is not in the official spec.
   - `#` - Print debugging information.
-  - `_` - Modulus
-  - `s` - Bitwise right shift, or left if given a negative number
-  - `"` - Bitwise AND
-  - `|` - Bitwise OR
-  - `` ` `` - Bitwise XOR
-  - `n` - Set the notepad to `-arg`, or `-notepad` if no argument is specified
   - **Conditionals**
     - **This only applies if the experimental flag is set. For non-experimental conditionals, please refer to the official language specification.**
     - `{...}` - Explicit code block
@@ -71,3 +65,31 @@ interpreter:exec("#") -- You can put any program here. This is an experimental c
         - `%6`
         - `-1`
         - `)6`
+
+## Selecting a layer to rotate
+- Use subscript numbers to select the layer from the given constant value.
+- Use superscript numbers to select the layer from the value of the given face.
+
+## Passing arguments to commands
+- Use normal digits to pass constant values to commands
+- Use circled digits to pass values from faces to commands
+
+## Code Page
+|    | _0 | _1 | _2 | _3 | _4 | _5 | _6 | _7 | _8 | _9 | _A | _B | _C | _D | _E | _F |
+|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|
+| 0_ |    |    |    |    |    |    |    |    |    |    | `\n`|    |    |    |    |    |
+| 1_ |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
+| 2_ | ` `| `!`| `"` | `#`| `$`| `%`| `&`| `'`| `(`| `)`| `*`| `+`| `|`| `-`| `.`| `/`|
+| 3_ | `0`| `1`| `2`| `3`| `4`| `5`| `6`| `7`| `8`| `9`| `:`| `;`| `<`| `=`| `>`| `?`|
+| 4_ | `@`| `A`| `B`| `C`| `D`| `E`| `F`| `G`| `H`| `I`| `J`| `K`| `L`| `M`| `N`| `O`|
+| 5_ | `P`| `Q`| `R`| `S`| `T`| `U`| `V`| `W`| `X`| `Y`| `Z`| `[`| \\| `]`| `^`| `_`|
+| 6_ | \` | `a`| `b`| `c`| `d`| `e`| `f`| `g`| `h`| `i`| `j`| `k`| `l`| `m`| `n`| `o`|
+| 7_ | `p`| `q`| `r`| `s`| `t`| `u`| `v`| `w`| `x`| `y`| `z`| `{`| `|`| `}`| `~`|    |
+| 8_ | `₀`| `₁`| `₂`| `₃`| `₄`| `₅`| `₆`| `₇`| `₈`| `₉`| `×`| `÷`| `ⁿ`|    |    |    |
+| 9_ | `⁰`| `¹`| `²`| `³`| `⁴`| `⁵`| `⁶`| `⁷`| `⁸`| `⁹`| `¬`| `«`| `»`|    |    |    |
+| A_ | `⓪`| `①`| `②`| `③`| `④`| `⑤`| `⑥`| `⑦`| `⑧`| `⑨`|    |    |    |    |    |    |
+| B_ |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
+| C_ |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
+| D_ |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
+| E_ |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
+| F_ |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
