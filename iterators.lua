@@ -350,12 +350,15 @@ function Iterator:sort(comparer)
   return table.iterator(buffer, true, true):unpack()
 end
 
+--- Returns whether the iterator will return anything, optionally filtered by a predicate
+-- If `predicate` is passed in, this will check if it returns true for any elements being iterated
+-- @param predicate Optional. Determines which results it should be checking for
 function Iterator:any(predicate)
   local ret = {self.target()}
   local buffer = {}
   while #ret > 0 do
     table.insert(buffer, ret)
-    if predicate(unpack(ret)) then
+    if not predicate or predicate(unpack(ret)) then
       self.target = table.iterator(buffer, true, true).select(function(t) return unpack(t) end).concat(self.target)
       return true
     end
@@ -365,6 +368,9 @@ function Iterator:any(predicate)
   return false
 end
 
+--- Returns whether all results from this iterator meet the given `predicate`
+-- This will create a new iterator that is a clone of this one
+-- @param predicate The function to match each result against
 function Iterator:all(predicate)
   local ret = {self.target()}
   local buffer = {}
@@ -380,6 +386,9 @@ function Iterator:all(predicate)
   return true
 end
 
+--- Returns the first result from the iterator, optionally filtered by a predicate
+-- If `predicate` is passed in, will return the first result from the iterator that the predicate matches
+-- @param predicate Optional. The function to match each result against
 function Iterator:first(predicate)
   local ret = {self.target()}
   local buffer = {}
