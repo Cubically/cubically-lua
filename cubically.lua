@@ -1,8 +1,10 @@
 require("cube")
-require("tables")
+require("iterators")
 
 -- Interpreter
 local C = {}
+
+C.codepage = require("codepage")
 
 function C.new(options)
   options = (type(options) == "table") and options or {}
@@ -20,7 +22,7 @@ function C:exec(program)
   assert(self.instance, "Must be an instance, call new() first")
   assert(type(program) == "string", "program must be a string")
   
-  self.program = program
+  self.program = self.codepage.tochars(self.codepage.utf8bytes(program))
   self.ptr = 1
   self.loops = {}
   self.conditionFailed = false
@@ -28,8 +30,9 @@ function C:exec(program)
   self.didCommand = false
   self.command = nil
   while self.ptr <= #self.program do
-    local c = self.program:sub(self.ptr, self.ptr)
-    local n = tonumber(c)
+    local char = self.program[self.ptr]
+    local byte = self.codepage.bytes[char]
+    local n = tonumber(char)
     local ptr = self.ptr
     
     if n then
@@ -38,6 +41,7 @@ function C:exec(program)
         self.didCommand = true
         self.doElse = false
       end
+    elseif 
     elseif self.conditionFailed then
       self:skipcmd()
       self.conditionFailed = false
@@ -50,7 +54,7 @@ function C:exec(program)
       end
       
       if self.ptr == ptr then
-        self.command = self.commands[c] or (self.options.experimental and self.experimental[c] or nil)
+        self.command = self.commands[char] or (self.options.experimental and self.experimental[char] or nil)
         self.didCommand = false
       end
     end
@@ -68,10 +72,10 @@ end
 
 function C:skipcmd()
   local level = 0
-  local c = self.program:sub(self.ptr, self.ptr)
+  local c = self.program[self.ptr]
   local extraSkip
   repeat
-    extraSkip = c == "?"
+    extraSkip = self.options.experimental and c == "?"
     
     repeat
       if c == "{" then
@@ -81,7 +85,7 @@ function C:skipcmd()
       end
       
       self.ptr = self.ptr + 1
-      c = self.program:sub(self.ptr, self.ptr)
+      c = self.program[self.ptr]
     until self.ptr > #self.program or (level == 0 and not tonumber(c))
   until not extraSkip
 end
@@ -171,7 +175,7 @@ C.commands = {
   
   ['&'] = function(self, n)
     if not n or self:value(n) ~= 0 then
-      self.program = ""
+      self.program = {}
     end
   end, 
   ['('] = function(self, n)
@@ -184,7 +188,7 @@ C.commands = {
         args = {}
       }
       
-      while self.program:sub(label.ptr, label.ptr) ~= "(" do
+      while self.program[label.ptr] ~= "(" do
         label.ptr = label.ptr - 1
       end
       
@@ -229,7 +233,7 @@ C.commands = {
     if self.options.experimental then
       if not self.doElse then
         if n then
-          if self.program:sub(self.ptr - 1, self.ptr - 1) == "!" then
+          if self.program[self.ptr - 1] == "!" then
             self:skipcmd()
             self.conditionFailed = true
             return

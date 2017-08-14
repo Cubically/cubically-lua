@@ -1,0 +1,2 @@
+50 100 100
+robber acceleration, cop speed, robber position
