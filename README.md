@@ -74,6 +74,55 @@ interpreter:exec("#") -- You can put any program here. This is an experimental c
 - Use normal digits to pass constant values to commands
 - Use circled digits to pass values from faces to commands
 
+## Commands
+### Cube manipulation
+|Command|Description|
+|---|---------------------------------|
+|`R`|Rotates the right face `n` times |
+|`L`|Rotates the left face `n` times  |
+|`U`|Rotates the top face `n` times   |
+|`D`|Rotates the bottom face `n` times|
+|`F`|Rotates the front face `n` times |
+|`B`|Rotates the back face `n` times  |
+You can tell the program which layer to rotate:
+- **₀ - ₉:** The layers 0 through 9 (subscript)
+- **⁰ - ⁹:** The layers given by face values 0 through 9 (superscript)
+`n` is defaulted to 0 for each of these commands. You may use `'` as an alias for `3` to rotate counter-clockwise.
+
+### Arithmetic
+|Command|Description|
+|---|---------------------------------|
+|`+`|Adds `n` to the notepad|
+|`-`|Subtracts `n` from the notepad|
+|`×`|Muliplies the notepad by `n`|
+|`÷`|Divides the notepad by `n`|
+|`%`|Calculates the modulus between the notepad and `n` |
+|`ⁿ`|Raises the notepad to the power `n`, or 2 by default|
+|`√`|Calculates the `n`th root of the notepad, or 2 by default|
+|'🅧'|Multiplies `n` by -1, default argument is notepad|
+|`↕`|Caculates the sine of `n` degrees, or the notepad by default|
+|`↔`|Caculates the cosine of `n` degrees, or the notepad by default|
+
+### Binary arithmetic
+|Command|Description|
+|---|---------------------------------|
+|`&`|Adds `n` to the notepad|
+|`|`|Subtracts `n` from the notepad|
+|`^`|Muliplies the notepad by `n`|
+|`¬`|Divides the notepad by `n`|
+|`«`|Rotate the notepad left `n` times|
+|`»`|Rotate the notepad right `n` times|
+
+### I/O
+
+### Conditionals
+
+### Loops
+
+### Arguments
+- **0 - 9:** The constant values 0 through 9
+- **⓪ - ⑨:**  The face values 0 through 9
+
 ## Code Page
 |    | _0 | _1 | _2 | _3 | _4 | _5 | _6 | _7 | _8 | _9 | _A | _B | _C | _D | _E | _F |
 |----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|
@@ -85,11 +134,11 @@ interpreter:exec("#") -- You can put any program here. This is an experimental c
 | 5_ | `P`| `Q`| `R`| `S`| `T`| `U`| `V`| `W`| `X`| `Y`| `Z`| `[`| \\| `]`| `^`| `_`|
 | 6_ | \` | `a`| `b`| `c`| `d`| `e`| `f`| `g`| `h`| `i`| `j`| `k`| `l`| `m`| `n`| `o`|
 | 7_ | `p`| `q`| `r`| `s`| `t`| `u`| `v`| `w`| `x`| `y`| `z`| `{`| `|`| `}`| `~`|    |
-| 8_ | `₀`| `₁`| `₂`| `₃`| `₄`| `₅`| `₆`| `₇`| `₈`| `₉`| `×`| `÷`| `ⁿ`|    |    |    |
+| 8_ | `₀`| `₁`| `₂`| `₃`| `₄`| `₅`| `₆`| `₇`| `₈`| `₉`| `×`| `÷`| `ⁿ`| `√`| `↕`| `↔`|
 | 9_ | `⁰`| `¹`| `²`| `³`| `⁴`| `⁵`| `⁶`| `⁷`| `⁸`| `⁹`| `¬`| `«`| `»`|    |    |    |
 | A_ | `⓪`| `①`| `②`| `③`| `④`| `⑤`| `⑥`| `⑦`| `⑧`| `⑨`|    |    |    |    |    |    |
-| B_ |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
-| C_ |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
+| B_ | `🅧`|    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
+| C_ | `π`| `φ`|    |    |    |    |    |    |    |    |    |    |    |    |    |    |
 | D_ |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
 | E_ |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
 | F_ |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |

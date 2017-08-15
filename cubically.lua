@@ -44,7 +44,7 @@ function C:exec(program)
     elseif self.codepage.circled(b) then
       -- Face-valued command argument
       if self.command then
-        self:command(self:value(self.codepage.digit(b)))
+        self:command(self:value(self.codepage.circled(b)))
         self.didCommand = true
         self.doElse = false
       end
@@ -54,6 +54,8 @@ function C:exec(program)
     elseif self.codepage.superscript(b) then
       -- Face-valued layer selection
       self.layer = self:value(self.codepage.superscript(b))
+    elseif c == "'" then
+      if self.command
     elseif self.conditionFailed then
       -- Command being skipped by a conditional
       
@@ -126,23 +128,23 @@ function C:value(n)
 end
 
 C.commands = {
-  ['Rn'] = function(self, n)
-    self.cube:R(n, self.layer)
+  ['R'] = function(self, n)
+    self.cube:R(n or 1, self.layer)
   end,
-  ['Ln'] = function(self, n)
-    self.cube:L(n, self.layer)
+  ['L'] = function(self, n)
+    self.cube:L(n or 1, self.layer)
   end,
-  ['Un'] = function(self, n)
-    self.cube:U(n, self.layer)
+  ['U'] = function(self, n)
+    self.cube:U(n or 1, self.layer)
   end,
-  ['Dn'] = function(self, n)
-    self.cube:D(n, self.layer)
+  ['D'] = function(self, n)
+    self.cube:D(n or 1, self.layer)
   end,
-  ['Fn'] = function(self, n)
-    self.cube:F(n, self.layer)
+  ['F'] = function(self, n)
+    self.cube:F(n or 1, self.layer)
   end,
-  ['Bn'] = function(self, n)
-    self.cube:B(n, self.layer)
+  ['B'] = function(self, n)
+    self.cube:B(n or 1, self.layer)
   end,
   
   [':n'] = function(self, n)
@@ -160,30 +162,44 @@ C.commands = {
   ['÷n'] = function(self, n)
     self.notepad = math.floor(self.notepad / n)
   end,
-  ['ⁿn'] = function(self, n)
-    self.notepad = self.notepad ^ n
+  ['ⁿ'] = function(self, n)
+    self.notepad = self.notepad ^ (n or 2)
   end,
   ['%n'] = function(self, n)
     self.notepad = self.notepad % n
   end,
-  ['«n'] = function(self, n)
-    self.notepad = bit32.arshift(self.notepad, -n)
+  ['√'] = function(self, n)
+    self.notepad = math.floor(self.notepad ^ (1 / (n or 2)))
   end,
-  ['»n'] = function(self, n)
-    self.notepad = bit32.arshift(self.notepad, n)
+  ['↕'] = function(self, n)
+    self.notepad = math.sin(n or self.notepad)
   end,
-  ['&xn'] = function(self, n)
+  ['↔'] = function(self, n)
+    self.notepad = math.cos(n or self.notepad)
+  end,
+  ['🅧'] = function(self, n)
+    self.notepad = -(n or self.notepad)
+  end
+  
+  ['«'] = function(self, n)
+    self.notepad = bit32.arshift(self.notepad, -(n or 1))
+  end,
+  ['»'] = function(self, n)
+    self.notepad = bit32.arshift(self.notepad, n or 1)
+  end,
+  ['&n'] = function(self, n)
     self.notepad = bit32.band(self.notepad, n)
   end,
-  ['|xn'] = function(self, n)
+  ['|n'] = function(self, n)
     self.notepad = bit32.bor(self.notepad, n)
   end,
-  ['^xn'] = function(self, n)
+  ['^n'] = function(self, n)
     self.notepad = bit32.bxor(self.notepad, n)
   end,
-  ['¬x'] = function(self, n)
+  ['¬'] = function(self, n)
     self.notepad = n and 0 or 1
   end,
+  
   ['>n'] = function(self, n)
     self.notepad = (self.notepad > n) and 1 or 0
   end,
@@ -295,8 +311,11 @@ C.commands = {
     end
   end,
   
-  ['@n'] = function(self, n)
-    io.write(string.char(n % 256))
+  ['"'] = function(self, n)
+    io.write(tostring(n or self.notepad))
+  end,
+  ['@'] = function(self, n)
+    io.write(string.char((n or self.notepad) % 256))
   end,
   ['$'] = function(self, n)
     self.input = io.read("*n") or self.input
@@ -305,6 +324,16 @@ C.commands = {
     local inp = io.read(1)
     self.input = inp and string.byte(inp) or -1
   end,
+  
+  ['πn'] = function(self, n)
+    -- TODO: nth digit of pi, where `0` is 3
+  end
+  ['en'] = function(self, n)
+    -- TODO: nth digit of e, where `0` is 2
+  end,
+  ['φn'] = function(self, n)
+    -- TODO: nth digit of phi, where `0` is 1
+  end
   
   ['#x'] = function(self, n)
     print(self.cube:tostring())
@@ -318,7 +347,7 @@ C.commands = {
 C.commands = table.iterator(C.commands)
   :select(function(cmd, func)
     local chars = C.codepage.utf8raw(cmd)
-    cmd = C.codepage.bytes[chars[0]]
+    cmd = C.codepage.bytes[chars[1]]
     local args = table.concat(chars, "", 2)
         
     if args:match("n") then

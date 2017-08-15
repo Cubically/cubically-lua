@@ -1,4 +1,4 @@
-require("iterators")
+
 
 -- Codepage
 -- First 128 characters are auto-populated below if not explicitly set here
@@ -15,12 +15,12 @@ codepage.chars = {
      "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "[", INH, "]", "^", "_", -- 5_ -- 5C is `\`
      "`", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", -- 6_
      "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "{", "|", "}", "~", nil, -- 7_
-     "₀", "₁", "₂", "₃", "₄", "₅", "₆", "₇", "₈", "₉", "×", "÷", "ⁿ", nil, nil, nil, -- 8_ -- subscript for constant layer selection
-     "⁰", "¹", "²", "³", "⁴", "⁵", "⁶", "⁷", "⁸", "⁹", "¬", "«", "»", nil, nil, nil, -- 9_ -- superscript for face value layer selection
-     "⓪", "①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧", "⑨", nil, nil, nil, nil, nil, nil, -- A_ -- circled digits for face value arguments
-     nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, -- B_
+     "₀", "₁", "₂", "₃", "₄", "₅", "₆", "₇", "₈", "₉", "×", "÷", "ⁿ", "√", "↕", "↔", -- 8_ -- subscript for constant layer selection
+     "⁰", "¹", "²", "³", "⁴", "⁵", "⁶", "⁷", "⁸", "⁹", "¬", "«", "»", nil, nil, nil, -- 9_ -- superscript for face-valued layer selection
+     "⓪", "①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧", "⑨", nil, nil, nil, nil, nil, nil, -- A_ -- circled digits for face-valued arguments
+     "🅧", nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, -- B_
      nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, -- C_
-     nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, -- D_
+     "π", "φ", nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, -- D_
      nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, -- E_
      nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, -- F_
 }
@@ -173,6 +173,8 @@ function codepage.digit(char)
   
   if char >= 0x30 and char < 0x3A then
     return char - 0x30
+  else if char == 0xD2 then
+    return -1
   end
 end
 
@@ -182,7 +184,7 @@ function codepage.subscript(char)
   end
   
   if char >= 0x80 and char < 0x8A then
-    return char
+    return char - 0x80
   end
 end
 
@@ -192,7 +194,7 @@ function codepage.superscript(char)
   end
   
   if char >= 0x90 and char < 0x9A then
-    return char
+    return char - 0x90
   end
 end
 
@@ -202,7 +204,7 @@ function codepage.circled(char)
   end
   
   if char >= 0xA0 and char < 0xAA then
-    return char
+    return char - 0xA0
   end
 end
 
