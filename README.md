@@ -66,14 +66,6 @@ interpreter:exec("#") -- You can put any program here. This is an experimental c
         - `-1`
         - `)6`
 
-## Selecting a layer to rotate
-- Use subscript numbers to select the layer from the given constant value.
-- Use superscript numbers to select the layer from the value of the given face.
-
-## Passing arguments to commands
-- Use normal digits to pass constant values to commands
-- Use circled digits to pass values from faces to commands
-
 ## Commands
 ### Cube manipulation
 |Command|Description|
@@ -84,9 +76,7 @@ interpreter:exec("#") -- You can put any program here. This is an experimental c
 |`D`|Rotates the bottom face `n` times|
 |`F`|Rotates the front face `n` times |
 |`B`|Rotates the back face `n` times  |
-You can tell the program which layer to rotate:
-- **₀ - ₉:** The layers 0 through 9 (subscript)
-- **⁰ - ⁹:** The layers given by face values 0 through 9 (superscript)
+
 `n` is defaulted to 0 for each of these commands. You may use `'` as an alias for `3` to rotate counter-clockwise.
 
 ### Arithmetic
@@ -114,26 +104,38 @@ You can tell the program which layer to rotate:
 |`»`|Rotate the notepad right `n` times|
 
 ### I/O
+|Command|Description|
+|---|---------------------------------|
+|`~`|Input the next character's ASCII value to face 7, or -1 if at end of input stream|
+|`$`|Input the next number to face 7, or leave the input unchanged if there is no number value to take as input|
+|`@`|Output the character with ASCII value `n`|
+|`"`|Output the number `n`|
 
 ### Conditionals
+Unchanged from normal Cubically
 
 ### Loops
+Unchanged from normal Cubically
 
-### Arguments
-- **0 - 9:** The constant values 0 through 9
-- **⓪ - ⑨:**  The face values 0 through 9
+### Selecting a layer to rotate
+- Use subscript numbers to select the layer from the given constant value.
+- Use superscript numbers to select the layer from the value of the given face.
+
+### Passing arguments to commands
+- Use normal digits to pass constant values to commands.
+- Use circled digits to pass values from faces to commands.
 
 ## Code Page
 |    | _0 | _1 | _2 | _3 | _4 | _5 | _6 | _7 | _8 | _9 | _A | _B | _C | _D | _E | _F |
 |----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|
 | 0_ |    |    |    |    |    |    |    |    |    |    | `\n`|    |    |    |    |    |
 | 1_ |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
-| 2_ | ` `| `!`| `"` | `#`| `$`| `%`| `&`| `'`| `(`| `)`| `*`| `+`| `|`| `-`| `.`| `/`|
+| 2_ | ` `| `!`| `"` | `#`| `$`| `%`| `&`| `'`| `(`| `)`| `*`| `+`| `,`| `-`| `.`| `/`|
 | 3_ | `0`| `1`| `2`| `3`| `4`| `5`| `6`| `7`| `8`| `9`| `:`| `;`| `<`| `=`| `>`| `?`|
 | 4_ | `@`| `A`| `B`| `C`| `D`| `E`| `F`| `G`| `H`| `I`| `J`| `K`| `L`| `M`| `N`| `O`|
-| 5_ | `P`| `Q`| `R`| `S`| `T`| `U`| `V`| `W`| `X`| `Y`| `Z`| `[`| \\| `]`| `^`| `_`|
-| 6_ | \` | `a`| `b`| `c`| `d`| `e`| `f`| `g`| `h`| `i`| `j`| `k`| `l`| `m`| `n`| `o`|
-| 7_ | `p`| `q`| `r`| `s`| `t`| `u`| `v`| `w`| `x`| `y`| `z`| `{`| `|`| `}`| `~`|    |
+| 5_ | `P`| `Q`| `R`| `S`| `T`| `U`| `V`| `W`| `X`| `Y`| `Z`| `[`| `\`| `]`| `^`| `_`|
+| 6_ | `` ` `` | `a`| `b`| `c`| `d`| `e`| `f`| `g`| `h`| `i`| `j`| `k`| `l`| `m`| `n`| `o`|
+| 7_ | `p`| `q`| `r`| `s`| `t`| `u`| `v`| `w`| `x`| `y`| `z`| `{`| `\|`| `}`| `~`|    |
 | 8_ | `₀`| `₁`| `₂`| `₃`| `₄`| `₅`| `₆`| `₇`| `₈`| `₉`| `×`| `÷`| `ⁿ`| `√`| `↕`| `↔`|
 | 9_ | `⁰`| `¹`| `²`| `³`| `⁴`| `⁵`| `⁶`| `⁷`| `⁸`| `⁹`| `¬`| `«`| `»`|    |    |    |
 | A_ | `⓪`| `①`| `②`| `③`| `④`| `⑤`| `⑥`| `⑦`| `⑧`| `⑨`|    |    |    |    |    |    |
