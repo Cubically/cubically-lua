@@ -30,30 +30,30 @@ function C:exec(program)
   self.command = nil
   self.layer = 0
   while self.ptr <= #self.program do
+    local ptr = self.ptr
     local c = self.program[self.ptr]
     local b = self.codepage.bytes[c]
-    local ptr = self.ptr
     
     if self.codepage.digit(b) then
-      -- Constant command argument
+      -- Face-valued command argument
       if self.command then
-        self:command(self.codepage.digit(b))
+        self:command(self:value(self.codepage.digit(b)))
         self.didCommand = true
         self.doElse = false
       end
     elseif self.codepage.circled(b) then
-      -- Face-valued command argument
+      -- Constant command argument
       if self.command then
-        self:command(self:value(self.codepage.circled(b)))
+        self:command(self.codepage.circled(b))
         self.didCommand = true
         self.doElse = false
       end
-    elseif self.codepage.subscript(b) then
-      -- Constant layer selection
-      self.layer = self.codepage.subscript(b)
     elseif self.codepage.superscript(b) then
       -- Face-valued layer selection
       self.layer = self:value(self.codepage.superscript(b))
+    elseif self.codepage.subscript(b) then
+      -- Constant layer selection
+      self.layer = self.codepage.subscript(b)
     elseif self.conditionFailed then
       -- Command being skipped by a conditional
       
@@ -87,6 +87,16 @@ function C:exec(program)
   end
 end
 
+function C:next()
+  local c = self[self.ptr]
+  local index = nil
+  
+  self.ptr = self.ptr + 1
+  
+  
+  return c, index
+end
+
 function C:skipcmd()
   local level = 0
   local c = self.program[self.ptr]
@@ -101,19 +111,18 @@ function C:skipcmd()
         level = level - 1
       end
       
-      self.ptr = self.ptr + 1
-      c = self.program[self.ptr]
-    until self.ptr > #self.program or (level == 0 and not tonumber(c))
+      c = self:next()
+    until self.ptr > #self.program or (level == 0 and not self.codepage.digit(c) and not self.codepage.circled(c))
   until not extraSkip
 end
 
-function C:value(n)
+function C:value(n, index)
   if n % 1 ~= 0 then
     return 0
   end
   
   if n >= 0 and n <= 5 then
-    return self.cube:value(n)
+    return self.cube:value(n, index)
   elseif n == 6 then
     return self.notepad
   elseif n == 7 then

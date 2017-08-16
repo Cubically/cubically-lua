@@ -10,14 +10,14 @@ codepage.chars = {
      nil, nil, nil, nil, nil, nil, nil, nil, nil, INH, nil, nil, nil, nil, nil, nil, -- 0_ -- 0A is `\n`
      nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, -- 1_
      " ", "!", '"', "#", "$", "%", "&", "'", "(", ")", "*", "+", ",", "-", ".", "/", -- 2_
-     "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ":", ";", "<", "=", ">", "?", -- 3_ -- normal digits for constant argument
+     "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ":", ";", "<", "=", ">", "?", -- 3_ -- normal digits for face-valued arguments
      "@", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", -- 4_
      "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "[", INH, "]", "^", "_", -- 5_ -- 5C is `\`
      "`", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", -- 6_
      "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "{", "|", "}", "~", nil, -- 7_
      "₀", "₁", "₂", "₃", "₄", "₅", "₆", "₇", "₈", "₉", "×", "÷", "ⁿ", "√", "↕", "↔", -- 8_ -- subscript for constant layer selection
      "⁰", "¹", "²", "³", "⁴", "⁵", "⁶", "⁷", "⁸", "⁹", "¬", "«", "»", nil, nil, nil, -- 9_ -- superscript for face-valued layer selection
-     "⓪", "①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧", "⑨", nil, nil, nil, nil, nil, nil, -- A_ -- circled digits for face-valued arguments
+     "⓪", "①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧", "⑨", nil, nil, nil, nil, nil, nil, -- A_ -- circled digits for constant arguments
      nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, -- B_
      nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, -- C_
      nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, -- D_
@@ -173,9 +173,6 @@ function codepage.digit(char)
   
   if char >= 0x30 and char < 0x3A then
     return char - 0x30
-  elseif char == 0x27 then
-    -- Treat each apostrophe as a 3
-    return 3
   end
 end
 
@@ -206,6 +203,9 @@ function codepage.circled(char)
   
   if char >= 0xA0 and char < 0xAA then
     return char - 0xA0
+  elseif char == 0x27 then
+    -- Treat each apostrophe as a 3
+    return 3
   end
 end
 

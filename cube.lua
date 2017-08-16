@@ -63,6 +63,7 @@ end
 
 function Cube:R(n, depth)
   n = n % 4
+  depth = depth or nil
   if depth < 0 or depth >= self.size then
     return
   end
@@ -89,6 +90,7 @@ end
 
 function Cube:L(n, depth)
   n = n % 4
+  depth = depth or nil
   if depth < 0 or depth >= self.size then
     return
   end
@@ -115,6 +117,7 @@ end
 
 function Cube:U(n, depth)
   n = n % 4
+  depth = depth or nil
   if depth < 0 or depth >= self.size then
     return
   end
@@ -141,6 +144,7 @@ end
 
 function Cube:D(n, depth)
   n = n % 4
+  depth = depth or nil
   if depth < 0 or depth >= self.size then
     return
   end
@@ -167,6 +171,7 @@ end
 
 function Cube:F(n, depth)
   n = n % 4
+  depth = depth or nil
   if depth < 0 or depth >= self.size then
     return
   end
@@ -194,6 +199,7 @@ end
 
 function Cube:B(n, depth)
   n = n % 4
+  depth = depth or nil
   if depth < 0 or depth >= self.size then
     return
   end
@@ -218,9 +224,13 @@ function Cube:B(n, depth)
   end
 end
 
-function Cube:value(n)
+function Cube:value(n, index)
   if n < 0 or n > 5 or n % 1 ~= 0 then
     return 0
+  end
+  
+  if index then
+    return self.faces[n][index] or 0
   end
   
   local sum = 0
