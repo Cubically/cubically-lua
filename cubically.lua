@@ -177,7 +177,7 @@ C.commands = {
   ['↔'] = function(self, n)
     self.notepad = math.cos(n or self.notepad)
   end,
-  ['🅧'] = function(self, n)
+  ['~'] = function(self, n)
     self.notepad = -(n or self.notepad)
   end
   
@@ -320,7 +320,7 @@ C.commands = {
   ['$'] = function(self, n)
     self.input = io.read("*n") or self.input
   end,
-  ['~'] = function(self, n)
+  ['_'] = function(self, n)
     local inp = io.read(1)
     self.input = inp and string.byte(inp) or -1
   end,
