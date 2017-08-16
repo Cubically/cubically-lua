@@ -174,7 +174,7 @@ function codepage.digit(char)
   if char >= 0x30 and char < 0x3A then
     return char - 0x30
   elseif char == 0x27 then
-    -- Treat apostrophes as 3s
+    -- Treat each apostrophe as a 3
     return 3
   end
 end

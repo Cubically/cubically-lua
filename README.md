@@ -89,7 +89,7 @@ interpreter:exec("#") -- You can put any program here. This is an experimental c
 |`%`|Calculates the modulus between the notepad and `n` |
 |`ⁿ`|Raises the notepad to the power `n`, or 2 by default|
 |`√`|Calculates the `n`th root of the notepad, or 2 by default|
-|'🅧'|Multiplies `n` by -1, default argument is notepad|
+|'~'|Multiplies `n` by -1, default argument is notepad|
 |`↕`|Caculates the sine of `n` degrees, or the notepad by default|
 |`↔`|Caculates the cosine of `n` degrees, or the notepad by default|
 
@@ -106,7 +106,7 @@ interpreter:exec("#") -- You can put any program here. This is an experimental c
 ### I/O
 |Command|Description|
 |---|---------------------------------|
-|`~`|Input the next character's ASCII value to face 7, or -1 if at end of input stream|
+|`_`|Input the next character's ASCII value to face 7, or -1 if at end of input stream|
 |`$`|Input the next number to face 7, or leave the input unchanged if there is no number value to take as input|
 |`@`|Output the character with ASCII value `n`|
 |`"`|Output the number `n`|
@@ -140,7 +140,7 @@ Unchanged from normal Cubically
 | 9_ | `⁰`| `¹`| `²`| `³`| `⁴`| `⁵`| `⁶`| `⁷`| `⁸`| `⁹`| `¬`| `«`| `»`|    |    |    |
 | A_ | `⓪`| `①`| `②`| `③`| `④`| `⑤`| `⑥`| `⑦`| `⑧`| `⑨`|    |    |    |    |    |    |
 | B_ |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
-| C_ | `π`| `φ`|    |    |    |    |    |    |    |    |    |    |    |    |    |    |
+| C_ |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
 | D_ |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
 | E_ |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
 | F_ |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
