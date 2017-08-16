@@ -54,8 +54,6 @@ function C:exec(program)
     elseif self.codepage.superscript(b) then
       -- Face-valued layer selection
       self.layer = self:value(self.codepage.superscript(b))
-    elseif c == "'" then
-      if self.command
     elseif self.conditionFailed then
       -- Command being skipped by a conditional
       
@@ -179,7 +177,7 @@ C.commands = {
   end,
   ['~'] = function(self, n)
     self.notepad = -(n or self.notepad)
-  end
+  end,
   
   ['«'] = function(self, n)
     self.notepad = bit32.arshift(self.notepad, -(n or 1))
@@ -324,17 +322,7 @@ C.commands = {
     local inp = io.read(1)
     self.input = inp and string.byte(inp) or -1
   end,
-  
-  ['πn'] = function(self, n)
-    -- TODO: nth digit of pi, where `0` is 3
-  end
-  ['en'] = function(self, n)
-    -- TODO: nth digit of e, where `0` is 2
-  end,
-  ['φn'] = function(self, n)
-    -- TODO: nth digit of phi, where `0` is 1
-  end
-  
+    
   ['#x'] = function(self, n)
     print(self.cube:tostring())
     print("Notepad: " .. self.notepad)

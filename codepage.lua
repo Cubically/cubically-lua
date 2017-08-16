@@ -20,7 +20,7 @@ codepage.chars = {
      "⓪", "①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧", "⑨", nil, nil, nil, nil, nil, nil, -- A_ -- circled digits for face-valued arguments
      nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, -- B_
      nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, -- C_
-     "π", "φ", nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, -- D_
+     nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, -- D_
      nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, -- E_
      nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, -- F_
 }
@@ -173,8 +173,9 @@ function codepage.digit(char)
   
   if char >= 0x30 and char < 0x3A then
     return char - 0x30
-  else if char == 0xD2 then
-    return -1
+  elseif char == 0x27 then
+    -- Treat apostrophes as 3s
+    return 3
   end
 end
 
