@@ -17,7 +17,7 @@ Codepage.chars = {
      "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "{", "|", "}", "~", nil, -- 7_
      "₀", "₁", "₂", "₃", "₄", "₅", "₆", "₇", "₈", "₉", "ⁿ", "√", "ṡ", "ċ", "Ṡ", "Ċ", -- 8_
      "⁰", "¹", "²", "³", "⁴", "⁵", "⁶", "⁷", "⁸", "⁹", "¬", "«", "»", nil, nil, nil, -- 9_
-     "𝟘", "𝟙", "𝟚", "𝟛", "𝟜", "𝟝", "𝟞", "𝟟", "𝟠", "𝟡", nil, nil, nil, nil, nil, nil, -- A_
+     "𝟘", "𝟙",  "𝟚", "𝟛", "𝟜", "𝟝", "𝟞",  "𝟟", "𝟠", "𝟡", "■", nil, nil, nil, nil, nil, -- A_
      "½", nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, -- B_
      nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, -- C_
      nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, -- D_
@@ -180,7 +180,8 @@ function Codepage:constarg(char, index)
   end
   
   if char >= 0xA0 and char < 0xAA then
-    return char - 0xA0
+    local r = char - 0xA0
+    return index and tonumber(r .. index) or r 
   elseif char == 0x27 then
     -- Treat each apostrophe as a 3
     return 3

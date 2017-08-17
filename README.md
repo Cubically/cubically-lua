@@ -129,12 +129,17 @@ Unchanged from normal Cubically
 ### Loops
 Unchanged from normal Cubically
 
+### Special
+|Command|Description|Default index|Default `n`|
+|-------|-----------|-------------|-----------|
+|`■`|Sets the cube to a new cube with size `n`||3|
+
 ### Constant arguments vs. face-valued arguments
 - Use double-struck digits to pass constant arguments from faces to commands.
   - These arguments will be equal to the digit used as the argument.
-  - This is limited to the values 0-9 (inclusive).
-  - `'` is an alias of `𝟛`
-  - `½` represents `1 / i`, where `i` is the given index, or 2 if no index is given
+  - If an index is specified, it is concatenated to the end of the digit. For example, `𝟚₇` will pass 27 to the command.
+- `'` is an alias of `𝟛`
+- `½` represents `1 / i`, where `i` is the given index, or 2 if no index is given
 - Use normal digits to pass face-valued arguments to commands.
   - These arguments, by default, pass the sum of every square on the given face to the command
   - If an index is specified, it passes the square on the given face at the given index to the command
@@ -181,3 +186,20 @@ All characters are accessible through `\yx`, where `yx` is the hexidecimal value
        012
        345
        678
+
+## Examples
+### Set top face to 1
+    R'DR
+
+### Print the cube
+    @𝟛₂𝟛₂𝟛₂-𝟛(+𝟛"0⁶-𝟚)6@𝟙₀
+    @𝟛₂𝟛₂𝟛₂-𝟛(+𝟞"0⁶-𝟝)6@𝟙₀
+    @𝟛₂𝟛₂𝟛₂-𝟛(+𝟡"0⁶-𝟠)6@𝟙₀
+    
+    -𝟛(+𝟛"1⁶-𝟚)6-𝟛(+𝟛"2⁶-𝟚)6-𝟛(+𝟛"3⁶-𝟚)6-𝟛(+𝟛"4⁶-𝟚)6@𝟙₀
+    -𝟛(+𝟞"1⁶-𝟝)6-𝟛(+𝟞"2⁶-𝟝)6-𝟛(+𝟞"3⁶-𝟝)6-𝟛(+𝟞"4⁶-𝟝)6@𝟙₀
+    -𝟛(+𝟡"1⁶-𝟠)6-𝟛(+𝟡"2⁶-𝟠)6-𝟛(+𝟡"3⁶-𝟠)6-𝟛(+𝟡"4⁶-𝟠)6@𝟙₀
+    
+    @𝟛₂𝟛₂𝟛₂-𝟛(+𝟛"5⁶-𝟚)6@𝟙₀
+    @𝟛₂𝟛₂𝟛₂-𝟛(+𝟞"5⁶-𝟝)6@𝟙₀
+    @𝟛₂𝟛₂𝟛₂-𝟛(+𝟡"5⁶-𝟠)6@𝟙₀

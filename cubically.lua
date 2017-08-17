@@ -46,7 +46,6 @@ function C:exec(program)
       end
     elseif self.codepage:constarg(b, index) then
       -- Constant command argument
-      -- TODO: What does `index` do here?
       if self.command then
         self:command(self.codepage:constarg(b, index))
         self.didCommand = true
@@ -106,7 +105,6 @@ function C:next()
       break
     end
     ptr = self.ptr
-    self.ptr = self.ptr + 1
     cur = self:nextChar()
   end
   self.ptr = ptr
@@ -140,6 +138,7 @@ function C:skipcmd()
   local level = 0
   local c = self.program[self.ptr]
   local extraSkip
+  local ptr = self.ptr
   repeat
     extraSkip = self.options.experimental and c == "?"
     
@@ -150,9 +149,11 @@ function C:skipcmd()
         level = level - 1
       end
       
+      ptr = self.ptr
       c = self:next()
     until self.ptr > #self.program or (level == 0 and not self.codepage:facearg(c) and not self.codepage:constarg(c))
   until not extraSkip
+  self.ptr = ptr
 end
 
 function C:value(n, index)
@@ -299,7 +300,7 @@ C.commands = {
         self.ptr = label.ptr
         return
       else
-        -- TODO: this should jump if *any* of the arguments are true, not only if the first one is
+        self.ptr = self.ptr - 1
         self:skipcmd()
       end
     end
@@ -378,7 +379,11 @@ C.commands = {
     local inp = io.read(1)
     self.input = inp and string.byte(inp) or -1
   end,
-    
+  
+  ['■'] = function(self, n)
+    self.cube = Cube.new(n)
+  end,
+  
   ['#x'] = function(self, n)
     print(self.cube:tostring())
     print("Notepad: " .. self.notepad)
