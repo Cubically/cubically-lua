@@ -117,15 +117,27 @@ Unchanged from normal Cubically
 ### Loops
 Unchanged from normal Cubically
 
-### Selecting a layer to rotate
-- Use subscript numbers to select the layer from the given constant value.
-- Use superscript numbers to select the layer from the value of the given face.
+### Constant arguments vs. face-valued arguments
+- Use circled digits to pass constant arguments from faces to commands.
+  - These arguments will be equal to the digit used as the argument.
+  - This is limited to the values 0-9 (inclusive).
+- Use normal digits to pass face-valued arguments to commands.
+  - These arguments, by default, pass the sum of every square on the given face to the command
+  - If an index is specified, it passes the square on the given face at the given index to the command
 
-### Passing arguments to commands
-- Use normal digits to pass constant values to commands.
-- Use circled digits to pass values from faces to commands.
+### Indexed commands and indexed arguments
+- You can specify an index when loading a command or argument
+- An index assigned to a command modifies the command
+  - For example, assigning the index 1 to the command R will rotate the layer 1 in from the right side counterclockwise from the right
+- An index assigned to an argument modifies the argument
+  - With face-valued arguments, it specifies which index on the face to take the value from instead of summing the face
+  - With constant arguments, it does nothing (feel free to suggest ideas!)
 
-## Code Page
+### Selecting an index
+- Use subscript numbers to select the index from the given constant value.
+- Use superscript numbers to select the index from the value of the given face.
+
+## Code page
 |    | _0 | _1 | _2 | _3 | _4 | _5 | _6 | _7 | _8 | _9 | _A | _B | _C | _D | _E | _F |
 |----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|
 | 0_ |    |    |    |    |    |    |    |    |    |    |`\n`|    |    |    |    |    |
@@ -144,3 +156,14 @@ Unchanged from normal Cubically
 | D_ |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
 | E_ |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
 | F_ |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
+
+## Face-valued argument indexes
+       012
+       345
+       678
+    012012012012
+    345345345345
+    678678678678
+       012
+       345
+       678
