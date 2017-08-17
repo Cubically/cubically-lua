@@ -28,32 +28,33 @@ function C:exec(program)
   self.doElse = false
   self.didCommand = false
   self.command = nil
-  self.layer = 0
+  self.commandIndex = nil
   while self.ptr <= #self.program do
-    local ptr = self.ptr
-    local c = self.program[self.ptr]
+    local c, index = self:next()
     local b = self.codepage.bytes[c]
+    local ptr = self.ptr
     
     if self.codepage.digit(b) then
       -- Face-valued command argument
       if self.command then
-        self:command(self:value(self.codepage.digit(b)))
+        self:command(self:value(self.codepage.digit(b), index))
         self.didCommand = true
         self.doElse = false
       end
     elseif self.codepage.circled(b) then
       -- Constant command argument
+      -- TODO: What does `index` do here?
       if self.command then
         self:command(self.codepage.circled(b))
         self.didCommand = true
         self.doElse = false
       end
     elseif self.codepage.superscript(b) then
-      -- Face-valued layer selection
-      self.layer = self:value(self.codepage.superscript(b))
+      -- Face-valued index selection
+      error("superscript")
     elseif self.codepage.subscript(b) then
-      -- Constant layer selection
-      self.layer = self.codepage.subscript(b)
+      -- Constant index selection
+      error("subscript")
     elseif self.conditionFailed then
       -- Command being skipped by a conditional
       
@@ -64,22 +65,20 @@ function C:exec(program)
       -- Command
       
       if self.command and not self.didCommand then
+        -- Implicitly call the command
         self:command()
         self.didCommand = true
         self.doElse = false
       end
       
       if self.ptr == ptr then
+        -- Call the current command if the pointer didn't move
         self.command = self.commands[b] or (self.options.experimental and self.experimental[b] or nil)
-        self.layer = 0
+        self.commandIndex = index
         self.didCommand = false
       end
     end
-    
-    if self.ptr == ptr then
-      self.ptr = self.ptr + 1
-    end
-    
+        
     if self.ptr > #self.program and self.command and not self.didCommand then
       self:command()
       self.didCommand = true
@@ -88,13 +87,27 @@ function C:exec(program)
 end
 
 function C:next()
-  local c = self[self.ptr]
+  local c = self.program[self.ptr]
   local index = nil
   
   self.ptr = self.ptr + 1
+  local cur = self.program[self.ptr]
+  while cur do
+    if self.codepage.superscript(cur) then
+      index = self:value(self.codepage.superscript(cur))
+    elseif self.codepage.subscript(cur) then
+      if type(index) ~= "string" then
+        index = ""
+      end
+      index = index .. self.codepage.subscript(cur)
+    else
+      break
+    end
+    self.ptr = self.ptr + 1
+    cur = self.program[self.ptr]
+  end
   
-  
-  return c, index
+  return c, tonumber(index)
 end
 
 function C:skipcmd()
@@ -136,22 +149,22 @@ end
 
 C.commands = {
   ['R'] = function(self, n)
-    self.cube:R(n or 1, self.layer)
+    self.cube:R(n or 1, self.commandIndex)
   end,
   ['L'] = function(self, n)
-    self.cube:L(n or 1, self.layer)
+    self.cube:L(n or 1, self.commandIndex)
   end,
   ['U'] = function(self, n)
-    self.cube:U(n or 1, self.layer)
+    self.cube:U(n or 1, self.commandIndex)
   end,
   ['D'] = function(self, n)
-    self.cube:D(n or 1, self.layer)
+    self.cube:D(n or 1, self.commandIndex)
   end,
   ['F'] = function(self, n)
-    self.cube:F(n or 1, self.layer)
+    self.cube:F(n or 1, self.commandIndex)
   end,
   ['B'] = function(self, n)
-    self.cube:B(n or 1, self.layer)
+    self.cube:B(n or 1, self.commandIndex)
   end,
   
   [':n'] = function(self, n)

@@ -63,7 +63,7 @@ end
 
 function Cube:R(n, depth)
   n = n % 4
-  depth = depth or nil
+  depth = depth or 0
   if depth < 0 or depth >= self.size then
     return
   end
@@ -90,7 +90,7 @@ end
 
 function Cube:L(n, depth)
   n = n % 4
-  depth = depth or nil
+  depth = depth or 0
   if depth < 0 or depth >= self.size then
     return
   end
@@ -117,7 +117,7 @@ end
 
 function Cube:U(n, depth)
   n = n % 4
-  depth = depth or nil
+  depth = depth or 0
   if depth < 0 or depth >= self.size then
     return
   end
@@ -144,7 +144,7 @@ end
 
 function Cube:D(n, depth)
   n = n % 4
-  depth = depth or nil
+  depth = depth or 0
   if depth < 0 or depth >= self.size then
     return
   end
@@ -171,7 +171,7 @@ end
 
 function Cube:F(n, depth)
   n = n % 4
-  depth = depth or nil
+  depth = depth or 0
   if depth < 0 or depth >= self.size then
     return
   end
@@ -199,7 +199,7 @@ end
 
 function Cube:B(n, depth)
   n = n % 4
-  depth = depth or nil
+  depth = depth or 0
   if depth < 0 or depth >= self.size then
     return
   end
