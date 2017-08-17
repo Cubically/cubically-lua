@@ -71,50 +71,57 @@ The notepad's value was changed from an integer type to a floating point type.
 
 ## Commands
 ### Cube manipulation
-|Command|Description|
-|---|---------------------------------|
-|`R`|Rotates the right face `n` times |
-|`L`|Rotates the left face `n` times  |
-|`U`|Rotates the top face `n` times   |
-|`D`|Rotates the bottom face `n` times|
-|`F`|Rotates the front face `n` times |
-|`B`|Rotates the back face `n` times  |
+|Command|Description|Default index|Default `n`|
+|-------|-----------|-------------|-----------|
+|`R`|Rotates the index'th layer from the right face `n` times|0||
+|`L`|Rotates the index'th layer from the left face `n` times|0||
+|`U`|Rotates the index'th layer from the top face `n` times|0||
+|`D`|Rotates the index'th layer from the bottom face `n` times|0||
+|`F`|Rotates the index'th layer from the front face `n` times|0||
+|`B`|Rotates the index'th layer from the back face `n` times|0||
 
 `n` is defaulted to 0 for each of these commands. You may use `'` as an alias for `3` to rotate counter-clockwise.
 
 ### Arithmetic
-|Command|Description|
-|---|---------------------------------|
-|`+`|Adds `n` to the notepad|
-|`-`|Subtracts `n` from the notepad|
-|`×`|Muliplies the notepad by `n`|
-|`÷`|Divides the notepad by `n`|
-|`%`|Calculates the modulus between the notepad and `n` |
-|`ⁿ`|Raises `n` (or notepad by default) to the power of the given index, or 2 by default|
-|`√`|Calculates the `n`th root of the notepad, or 2 by default|
-|'~'|Multiplies `n` by -1, default argument is notepad|
-|`ṡ`|Caculates the sine of `n` degrees, or the notepad by default|
-|`ċ`|Caculates the cosine of `n` degrees, or the notepad by default|
-|`Ṡ`|Calculates the sine⁻¹ of `n`, or the notepad by default|
-|`Ċ`|Calculates the cosine⁻¹ of `n`, or the notepad by default|
+|Command|Description|Default index|Default `n`|
+|-------|-----------|-------------|-----------|
+|`+`|Sets the notepad to the index plus `n`|Notepad||
+|`-`|Sets the notepad to the index minus `n`|Notepad||
+|`*`|Sets the notepad to the index times `n`|Notepad||
+|`/`|Sets the notepad to the index divided by `n`|Notepad||
+|`%`|Sets the notepad to the index (mod `n`)|Notepad||
+|`ⁿ`|Sets the notepad to the index raised to `n`|Notepad||
+|`√`|Sets the notepad to the index'th root of `n`|2|Notepad|
+|`~`|Multiplies `n` by -1||Notepad|
+|`ṡ`|Caculates the sine of `n` degrees||Notepad|
+|`ċ`|Caculates the cosine of `n` degrees||Notepad|
+|`Ṡ`|Calculates the sine⁻¹ of `n`||Notepad|
+|`Ċ`|Calculates the cosine⁻¹ of `n`||Notepad|
 
 ### Binary arithmetic
-|Command|Description|
-|---|---------------------------------|
-|`&`|Adds `n` to the notepad|
-|`|`|Subtracts `n` from the notepad|
-|`^`|Muliplies the notepad by `n`|
-|`¬`|Divides the notepad by `n`|
-|`«`|Rotate the notepad left `n` times|
-|`»`|Rotate the notepad right `n` times|
+|Command|Description|Default index|Default `n`|
+|-------|-----------|-------------|-----------|
+|`&`|Sets the notepad to `n` (binary) AND the index|Notepad||
+|`|`|Sets the notepad to `n` (binary) OR the index|Notepad||
+|`^`|Sets the notepad to `n` (binary) XOR the index|Notepad||
+|`«`|Sets the notepad to the index left shifted `n` times|Notepad|1|
+|`»`|Sets the notepad to the index right shifted `n` times|Notepad|1|
+
+### Boolean logic
+|Command|Description|Default index|Default `n`|
+|-------|-----------|-------------|-----------|
+|`>`|Sets the notepad to 1 if the index > `n`, otherwise 0|Notepad||
+|`<`|Sets the notepad to 1 if the index < `n` otherwise 0|Notepad||
+|`=`|Sets the notepad to 1 if the index == `n` otherwise 0|Notepad||
+|`¬`|Sets the notepad to (logical) NOT `n`||Notepad|
 
 ### I/O
-|Command|Description|
-|---|---------------------------------|
-|`_`|Input the next character's ASCII value to face 7, or -1 if at end of input stream|
-|`$`|Input the next number to face 7, or leave the input unchanged if there is no number value to take as input|
-|`@`|Output the character with ASCII value `⌊n⌋`|
-|`"`|Output the number `n`|
+|Command|Description|Default index|Default `n`|
+|-------|-----------|-------------|-----------|
+|`_`|Input the next character's ASCII value to face 7, or -1 if at end of input stream|||
+|`$`|Input the next number to face 7, or leave the input unchanged if there is no number value to take as input|||
+|`@`|Output the character with ASCII value `floor(n)`||Notepad|
+|`"`|Output the number `n`||Notepad|
 
 ### Conditionals
 Unchanged from normal Cubically
@@ -134,15 +141,13 @@ Unchanged from normal Cubically
 
 ### Indexed commands and indexed arguments
 - You can specify an index when loading a command or argument
+  - Use superscript numbers to select the index from the value of the given face.
+  - Use subscript numbers to select the index from the given constant value. Unlike constant arguments, `₂₇` will select index `27`.
 - An index assigned to a command modifies the command
   - For example, assigning the index 1 to the command R will rotate the layer 1 in from the right side counterclockwise from the right
 - An index assigned to an argument modifies the argument
   - With face-valued arguments, it specifies which index on the face to take the value from instead of summing the face
   - With constant arguments, it does nothing (feel free to suggest ideas!)
-
-### Selecting an index
-- Use subscript numbers to select the index from the given constant value.
-- Use superscript numbers to select the index from the value of the given face.
 
 ## Code page
 |    | _0 | _1 | _2 | _3 | _4 | _5 | _6 | _7 | _8 | _9 | _A | _B | _C | _D | _E | _F |

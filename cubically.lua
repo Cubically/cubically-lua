@@ -197,22 +197,22 @@ C.commands = {
     self.notepad = n
   end,
   ['+n'] = function(self, n)
-    self.notepad = self.notepad + n
+    self.notepad = (self.commandIndex or self.notepad) + n
   end,
   ['-n'] = function(self, n)
-    self.notepad = self.notepad - n
+    self.notepad = (self.commandIndex or self.notepad) - n
   end,
   ['*n'] = function(self, n)
-    self.notepad = self.notepad * n
+    self.notepad = (self.commandIndex or self.notepad) * n
   end,
   ['/n'] = function(self, n)
-    self.notepad = self.notepad / n
+    self.notepad = (self.commandIndex or self.notepad) / n
   end,
   ['ⁿ'] = function(self, n)
     self.notepad = (n or self.notepad) ^ (self.commandIndex or 2)
   end,
   ['%n'] = function(self, n)
-    self.notepad = self.notepad % n
+    self.notepad = (self.commandIndex or self.notepad) % n
   end,
   ['√'] = function(self, n)
     self.notepad = (n or self.notepad) ^ (1 / (self.commandIndex or 2))
@@ -235,32 +235,32 @@ C.commands = {
   end,
   
   ['«'] = function(self, n)
-    self.notepad = bit32.arshift(self.notepad, -(n or 1))
+    self.notepad = bit32.arshift((self.commandIndex or self.notepad), -(n or 1))
   end,
   ['»'] = function(self, n)
-    self.notepad = bit32.arshift(self.notepad, n or 1)
+    self.notepad = bit32.arshift((self.commandIndex or self.notepad), n or 1)
   end,
   ['&n'] = function(self, n)
-    self.notepad = bit32.band(self.notepad, n)
+    self.notepad = bit32.band((self.commandIndex or self.notepad), n)
   end,
   ['|n'] = function(self, n)
-    self.notepad = bit32.bor(self.notepad, n)
+    self.notepad = bit32.bor((self.commandIndex or self.notepad), n)
   end,
   ['^n'] = function(self, n)
     self.notepad = bit32.bxor(self.notepad, n)
   end,
   ['¬'] = function(self, n)
-    self.notepad = n and 0 or 1
+    self.notepad = (n or self.notepad) and 0 or 1
   end,
   
   ['>n'] = function(self, n)
-    self.notepad = (self.notepad > n) and 1 or 0
+    self.notepad = ((self.commandIndex or self.notepad) > n) and 1 or 0
   end,
   ['<n'] = function(self, n)
-    self.notepad = (self.notepad < n) and 1 or 0
+    self.notepad = ((self.commandIndex or self.notepad) < n) and 1 or 0
   end,
   ['=n'] = function(self, n)
-    self.notepad = (self.notepad == n) and 1 or 0
+    self.notepad = ((self.commandIndex or self.notepad) == n) and 1 or 0
   end,
   
   ['.'] = function(self, n)
