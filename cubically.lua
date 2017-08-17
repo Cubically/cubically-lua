@@ -176,11 +176,11 @@ C.commands = {
   ['-n'] = function(self, n)
     self.notepad = self.notepad - n
   end,
-  ['×n'] = function(self, n)
+  ['*n'] = function(self, n)
     self.notepad = self.notepad * n
   end,
-  ['÷n'] = function(self, n)
-    self.notepad = math.floor(self.notepad / n)
+  ['/n'] = function(self, n)
+    self.notepad = self.notepad / n
   end,
   ['ⁿ'] = function(self, n)
     self.notepad = self.notepad ^ (n or 2)
@@ -189,14 +189,21 @@ C.commands = {
     self.notepad = self.notepad % n
   end,
   ['√'] = function(self, n)
-    self.notepad = math.floor(self.notepad ^ (1 / (n or 2)))
+    self.notepad = self.notepad ^ (1 / (n or 2))
   end,
-  ['↕'] = function(self, n)
+  ['ṡ'] = function(self, n)
     self.notepad = math.sin(n or self.notepad)
   end,
-  ['↔'] = function(self, n)
+  ['ċ'] = function(self, n)
     self.notepad = math.cos(n or self.notepad)
   end,
+  ['Ṡ'] = function(self, n)
+    self.notepad = math.asin(n or self.notepad)
+  end,
+  ['Ċ'] = function(self, n)
+    self.notepad = math.acos(n or self.notepad)
+  end,
+  
   ['~'] = function(self, n)
     self.notepad = -(n or self.notepad)
   end,
@@ -332,10 +339,11 @@ C.commands = {
   end,
   
   ['"'] = function(self, n)
+    -- TODO: Maybe make the index select what base to output this in?
     io.write(tostring(n or self.notepad))
   end,
   ['@'] = function(self, n)
-    io.write(string.char((n or self.notepad) % 256))
+    io.write(string.char(math.floor(n or self.notepad) % 256))
   end,
   ['$'] = function(self, n)
     self.input = io.read("*n") or self.input
