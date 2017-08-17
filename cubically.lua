@@ -235,19 +235,19 @@ C.commands = {
   end,
   
   ['«'] = function(self, n)
-    self.notepad = bit32.arshift((self.commandIndex or self.notepad), -(n or 1))
+    self.notepad = bit32.arshift(self.commandIndex or self.notepad, -(n or 1))
   end,
   ['»'] = function(self, n)
-    self.notepad = bit32.arshift((self.commandIndex or self.notepad), n or 1)
+    self.notepad = bit32.arshift(self.commandIndex or self.notepad, n or 1)
   end,
   ['&n'] = function(self, n)
-    self.notepad = bit32.band((self.commandIndex or self.notepad), n)
+    self.notepad = bit32.band(self.commandIndex or self.notepad, n)
   end,
   ['|n'] = function(self, n)
-    self.notepad = bit32.bor((self.commandIndex or self.notepad), n)
+    self.notepad = bit32.bor(self.commandIndex or self.notepad, n)
   end,
-  ['^n'] = function(self, n)
-    self.notepad = bit32.bxor(self.notepad, n)
+  ['^'] = function(self, n)
+    self.notepad = n and bit32.bxor(self.commandIndex or self.notepad, n) or bit32.bnot(self.commandIndex or self.notepad)
   end,
   ['¬'] = function(self, n)
     self.notepad = (n or self.notepad) and 0 or 1

@@ -102,8 +102,8 @@ The notepad's value was changed from an integer type to a floating point type.
 |Command|Description|Default index|Default `n`|
 |-------|-----------|-------------|-----------|
 |`&`|Sets the notepad to `n` (binary) AND the index|Notepad||
-|`|`|Sets the notepad to `n` (binary) OR the index|Notepad||
-|`^`|Sets the notepad to `n` (binary) XOR the index|Notepad||
+|`\|`|Sets the notepad to `n` (binary) OR the index|Notepad||
+|`^`|Sets the notepad to `n` (binary) XOR the index|Notepad|Performs binary NOT|
 |`«`|Sets the notepad to the index left shifted `n` times|Notepad|1|
 |`»`|Sets the notepad to the index right shifted `n` times|Notepad|1|
 
