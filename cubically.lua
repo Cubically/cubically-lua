@@ -1,27 +1,30 @@
 require("cube")
 require("iterators")
+require("codepage")
 
 -- Interpreter
 local C = {}
 
-C.codepage = require("codepage")
-
 function C.new(options)
   options = (type(options) == "table") and options or {}
   
-  return setmetatable({
+  local cubically = setmetatable({
     cube = Cube.new(options.size),
     notepad = 0,
     input = 0,
     options = options
   }, {__index = C})
+
+  cubically.codepage = Codepage.new(cubically)
+  
+  return cubically
 end
 
 function C:exec(program)
   assert(self.cube, "Must be an instance, call new() first")
   assert(type(program) == "string", "program must be a string")
   
-  self.program = self.codepage.tochars(self.codepage.utf8bytes(program))
+  self.program = self.codepage:tochars(self.codepage:utf8bytes(program))
   self.ptr = 1
   self.loops = {}
   self.conditionFailed = false
@@ -34,25 +37,25 @@ function C:exec(program)
     local b = self.codepage.bytes[c]
     local ptr = self.ptr
     
-    if self.codepage.digit(b) then
+    if self.codepage:facearg(b, index) then
       -- Face-valued command argument
       if self.command then
-        self:command(self:value(self.codepage.digit(b), index))
+        self:command(self.codepage:facearg(b, index))
         self.didCommand = true
         self.doElse = false
       end
-    elseif self.codepage.circled(b) then
+    elseif self.codepage:constarg(b, index) then
       -- Constant command argument
       -- TODO: What does `index` do here?
       if self.command then
-        self:command(self.codepage.circled(b))
+        self:command(self.codepage:constarg(b, index))
         self.didCommand = true
         self.doElse = false
       end
-    elseif self.codepage.superscript(b) then
+    elseif self.codepage:faceindex(b) then
       -- Face-valued index selection
       error("superscript")
-    elseif self.codepage.subscript(b) then
+    elseif self.codepage:constindex(b) then
       -- Constant index selection
       error("subscript")
     elseif self.conditionFailed then
@@ -93,13 +96,13 @@ function C:next()
   self.ptr = self.ptr + 1
   local cur = self.program[self.ptr]
   while cur do
-    if self.codepage.superscript(cur) then
-      index = self:value(self.codepage.superscript(cur))
-    elseif self.codepage.subscript(cur) then
+    if self.codepage:faceindex(cur) then
+      index = self.codepage:faceindex(cur)
+    elseif self.codepage:constindex(cur) then
       if type(index) ~= "string" then
         index = ""
       end
-      index = index .. self.codepage.subscript(cur)
+      index = index .. self.codepage:constindex(cur)
     else
       break
     end
@@ -125,7 +128,7 @@ function C:skipcmd()
       end
       
       c = self:next()
-    until self.ptr > #self.program or (level == 0 and not self.codepage.digit(c) and not self.codepage.circled(c))
+    until self.ptr > #self.program or (level == 0 and not self.codepage:facearg(c) and not self.codepage:constarg(c))
   until not extraSkip
 end
 
@@ -364,8 +367,8 @@ C.commands = {
 -- Parse commands
 C.commands = table.iterator(C.commands)
   :select(function(cmd, func)
-    local chars = C.codepage.utf8raw(cmd)
-    cmd = C.codepage.bytes[chars[1]]
+    local chars = Codepage:utf8raw( cmd)
+    cmd = Codepage.bytes[chars[1]]
     local args = table.concat(chars, "", 2)
         
     if args:match("n") then

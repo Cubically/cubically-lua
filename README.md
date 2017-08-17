@@ -66,6 +66,9 @@ interpreter:exec("#") -- You can put any program here. This is an experimental c
         - `-1`
         - `)6`
 
+## Notepad
+The notepad's value was changed from an integer type to a floating point type.
+
 ## Commands
 ### Cube manipulation
 |Command|Description|
@@ -108,7 +111,7 @@ interpreter:exec("#") -- You can put any program here. This is an experimental c
 |---|---------------------------------|
 |`_`|Input the next character's ASCII value to face 7, or -1 if at end of input stream|
 |`$`|Input the next number to face 7, or leave the input unchanged if there is no number value to take as input|
-|`@`|Output the character with ASCII value `n`|
+|`@`|Output the character with ASCII value `⌊n⌋`|
 |`"`|Output the number `n`|
 
 ### Conditionals
@@ -121,6 +124,8 @@ Unchanged from normal Cubically
 - Use circled digits to pass constant arguments from faces to commands.
   - These arguments will be equal to the digit used as the argument.
   - This is limited to the values 0-9 (inclusive).
+  - `'` is an alias of `③`
+  - `½` represents `1 / i`, where `i` is the given index, or 2 if no index is given
 - Use normal digits to pass face-valued arguments to commands.
   - These arguments, by default, pass the sum of every square on the given face to the command
   - If an index is specified, it passes the square on the given face at the given index to the command
@@ -151,7 +156,7 @@ Unchanged from normal Cubically
 | 8_ | `₀`| `₁`| `₂`| `₃`| `₄`| `₅`| `₆`| `₇`| `₈`| `₉`| `×`| `÷`| `ⁿ`| `√`| `↕`| `↔`|
 | 9_ | `⁰`| `¹`| `²`| `³`| `⁴`| `⁵`| `⁶`| `⁷`| `⁸`| `⁹`| `¬`| `«`| `»`|    |    |    |
 | A_ | `⓪`| `①`| `②`| `③`| `④`| `⑤`| `⑥`| `⑦`| `⑧`| `⑨`|    |    |    |    |    |    |
-| B_ |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
+| B_ | `½`|    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
 | C_ |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
 | D_ |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
 | E_ |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
