@@ -51,12 +51,6 @@ function C:exec(program)
         self.didCommand = true
         self.doElse = false
       end
-    elseif self.codepage:faceindex(b) then
-      -- Face-valued index selection
-      error("Unexpected superscript")
-    elseif self.codepage:constindex(b) then
-      -- Constant index selection
-      error("Unexpected subscript")
     elseif self.conditionFailed then
       -- Command being skipped by a conditional
       
@@ -168,7 +162,7 @@ function C:value(n, index)
   elseif n == 7 then
     return self.input
   elseif n == 8 then
-    return self.cube:solved() and 1 or 0
+    return self.cube:solved() and 0 or 1
   else
     return 0
   end
@@ -295,7 +289,7 @@ C.commands = {
   [')'] = function(self, n)
     local label = table.remove(self.loops)
     if label then
-      if (not n or n ~= 0) and (not label.args or table.iterator(label.args).any(function(arg) return self:value(arg) ~= 0 end)) then
+      if (not n or n ~= 0) and (not label.args or table.iterator(label.args):any(function(arg) return self:value(arg) ~= 0 end)) then
         -- Jump to the `(`
         self.ptr = label.ptr
         return
