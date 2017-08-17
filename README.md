@@ -90,11 +90,13 @@ The notepad's value was changed from an integer type to a floating point type.
 |`×`|Muliplies the notepad by `n`|
 |`÷`|Divides the notepad by `n`|
 |`%`|Calculates the modulus between the notepad and `n` |
-|`ⁿ`|Raises the notepad to the power `n`, or 2 by default|
+|`ⁿ`|Raises `n` (or notepad by default) to the power of the given index, or 2 by default|
 |`√`|Calculates the `n`th root of the notepad, or 2 by default|
 |'~'|Multiplies `n` by -1, default argument is notepad|
-|`↕`|Caculates the sine of `n` degrees, or the notepad by default|
-|`↔`|Caculates the cosine of `n` degrees, or the notepad by default|
+|`ṡ`|Caculates the sine of `n` degrees, or the notepad by default|
+|`ċ`|Caculates the cosine of `n` degrees, or the notepad by default|
+|`Ṡ`|Calculates the sine⁻¹ of `n`, or the notepad by default|
+|`Ċ`|Calculates the cosine⁻¹ of `n`, or the notepad by default|
 
 ### Binary arithmetic
 |Command|Description|
@@ -121,10 +123,10 @@ Unchanged from normal Cubically
 Unchanged from normal Cubically
 
 ### Constant arguments vs. face-valued arguments
-- Use circled digits to pass constant arguments from faces to commands.
+- Use double-struck digits to pass constant arguments from faces to commands.
   - These arguments will be equal to the digit used as the argument.
   - This is limited to the values 0-9 (inclusive).
-  - `'` is an alias of `③`
+  - `'` is an alias of `𝟛`
   - `½` represents `1 / i`, where `i` is the given index, or 2 if no index is given
 - Use normal digits to pass face-valued arguments to commands.
   - These arguments, by default, pass the sum of every square on the given face to the command
@@ -155,12 +157,14 @@ Unchanged from normal Cubically
 | 7_ | `p`| `q`| `r`| `s`| `t`| `u`| `v`| `w`| `x`| `y`| `z`| `{`|`\|`| `}`| `~`|    |
 | 8_ | `₀`| `₁`| `₂`| `₃`| `₄`| `₅`| `₆`| `₇`| `₈`| `₉`| `×`| `÷`| `ⁿ`| `√`| `↕`| `↔`|
 | 9_ | `⁰`| `¹`| `²`| `³`| `⁴`| `⁵`| `⁶`| `⁷`| `⁸`| `⁹`| `¬`| `«`| `»`|    |    |    |
-| A_ | `⓪`| `①`| `②`| `③`| `④`| `⑤`| `⑥`| `⑦`| `⑧`| `⑨`|    |    |    |    |    |    |
+| A_ | "𝟘"| "𝟙"| "𝟚"| "𝟛"| "𝟜"| "𝟝"| "𝟞"| "𝟟"| "𝟠"| "𝟡"|    |    |    |    |    |    |
 | B_ | `½`|    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
 | C_ |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
 | D_ |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
 | E_ |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
 | F_ |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
+
+All characters are accessible through `\yx`, where `yx` is the hexidecimal value of the character. For example, `\A3` would be equivalent to `𝟛`.
 
 ## Face-valued argument indexes
        012

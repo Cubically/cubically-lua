@@ -54,10 +54,10 @@ function C:exec(program)
       end
     elseif self.codepage:faceindex(b) then
       -- Face-valued index selection
-      error("superscript")
+      error("Unexpected superscript")
     elseif self.codepage:constindex(b) then
       -- Constant index selection
-      error("subscript")
+      error("Unexpected subscript")
     elseif self.conditionFailed then
       -- Command being skipped by a conditional
       
@@ -90,11 +90,10 @@ function C:exec(program)
 end
 
 function C:next()
-  local c = self.program[self.ptr]
+  local c = self:nextChar()
   local index = nil
-  
-  self.ptr = self.ptr + 1
-  local cur = self.program[self.ptr]
+  local ptr = self.ptr
+  local cur = self:nextChar()
   while cur do
     if self.codepage:faceindex(cur) then
       index = self.codepage:faceindex(cur)
@@ -106,11 +105,35 @@ function C:next()
     else
       break
     end
+    ptr = self.ptr
     self.ptr = self.ptr + 1
-    cur = self.program[self.ptr]
+    cur = self:nextChar()
   end
+  self.ptr = ptr
   
   return c, tonumber(index)
+end
+
+function C:nextChar()
+  local c = self.program[self.ptr]
+  if c == "\\" then
+    local charsLeft = 2
+    local hex = 0
+    self.ptr = self.ptr + 1
+    local cur = self.program[self.ptr]
+    local b = c:byte(1)
+    while cur and charsLeft > 0 and self.codepage:hex(cur) do
+      hex = hex * 16 + self.codepage:hex(cur)
+      
+      self.ptr = self.ptr + 1
+      cur = self.program[self.ptr]
+      charsLeft = charsLeft - 1
+    end
+    c = self.codepage.chars[hex]
+  else
+    self.ptr = self.ptr + 1
+  end
+  return c
 end
 
 function C:skipcmd()
@@ -186,13 +209,13 @@ C.commands = {
     self.notepad = self.notepad / n
   end,
   ['ⁿ'] = function(self, n)
-    self.notepad = self.notepad ^ (n or 2)
+    self.notepad = (n or self.notepad) ^ (self.commandIndex or 2)
   end,
   ['%n'] = function(self, n)
     self.notepad = self.notepad % n
   end,
   ['√'] = function(self, n)
-    self.notepad = self.notepad ^ (1 / (n or 2))
+    self.notepad = (n or self.notepad) ^ (1 / (self.commandIndex or 2))
   end,
   ['ṡ'] = function(self, n)
     self.notepad = math.sin(n or self.notepad)
