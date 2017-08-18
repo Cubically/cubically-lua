@@ -245,7 +245,7 @@ C.commands = {
     self.notepad = n and bit32.bxor(self.commandIndex or self.notepad, n) or bit32.bnot(self.commandIndex or self.notepad)
   end,
   ['¬'] = function(self, n)
-    self.notepad = (n or self.notepad) and 0 or 1
+    self.notepad = (n or self.notepad) == 0 and 1 or 0
   end,
   
   ['>n'] = function(self, n)
@@ -285,6 +285,8 @@ C.commands = {
     else
       label.args = nil
     end
+    
+    label.index = self.commandIndex
   end,
   [')'] = function(self, n)
     local label = table.remove(self.loops)
@@ -299,8 +301,8 @@ C.commands = {
       end
     end
   end,
-  ['?n'] = function(self, n)
-    if n == 0 then
+  ['?'] = function(self, n)
+    if (n or self.notepad) == 0 then
       self.conditionFailed = true
       if not self.options.experimental then
         self:skipcmd()
@@ -377,6 +379,21 @@ C.commands = {
   ['■'] = function(self, n)
     self.cube = Cube.new(n)
   end,
+  ['fi'] = function(self, n)
+    self.cube:setFace(self.commandIndex, n)
+  end,
+  
+  ['p'] = function(self, n)
+    n = n or self.notepad
+    local sqrt = math.sqrt(n)
+    for i = 2, sqrt do
+      if i % n == 0 then
+        self.notepad = 0
+        return
+      end
+    end
+    self.notepad = 1
+  end,
   
   ['#x'] = function(self, n)
     print(self.cube:tostring())
@@ -397,6 +414,13 @@ C.commands = table.iterator(C.commands)
       local f = func
       func = function(self, n)
         return n and f(self, n) or nil
+      end
+    end
+    
+    if args:match("i") then
+      local f = func
+      func = function(self, n)
+        return self.commandIndex and f(self, n) or nil
       end
     end
     
