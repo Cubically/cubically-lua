@@ -32,7 +32,7 @@ function Cube:index(x, y)
 end
 
 function Cube:solved()
-  return self:value(0) == 0 and self:value(1) == 18 and self:value(2) == 27
+  return self:value(0) == 0 and self:value(1) == self.size ^ 2 and self:value(2) == 2 * self.size ^ 2
 end
 
 local function rotateFace(cube, face)
